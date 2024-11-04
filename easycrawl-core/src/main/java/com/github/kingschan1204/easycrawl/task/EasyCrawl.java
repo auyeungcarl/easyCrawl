@@ -1,6 +1,8 @@
 package com.github.kingschan1204.easycrawl.task;
 
+import com.github.kingschan1204.easycrawl.core.agent.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
+import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.http.UrlHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import com.github.kingschan1204.easycrawl.helper.validation.Assert;
@@ -27,6 +29,11 @@ public class EasyCrawl<R> {
         return this;
     }
 
+    public EasyCrawl<R> webAgent(String curl) {
+        HttpRequestConfig config = new CURLHelper(curl).getConfig();
+        this.webAgent = WebAgent.defaultAgent(config);
+        return this;
+    }
 
     public EasyCrawl<R> analyze(Function<WebAgent, R> parserFunction) {
         this.parserFunction = parserFunction;
