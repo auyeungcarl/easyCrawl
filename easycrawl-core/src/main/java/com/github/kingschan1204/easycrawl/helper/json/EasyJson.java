@@ -13,10 +13,7 @@ import lombok.SneakyThrows;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -65,6 +62,7 @@ public class EasyJson implements JsonHelper {
     }
 
 
+    @Override
     @SneakyThrows
     public <T> T toJavaObj(Class<T> clazz) {
         if (clazz.equals(String.class)) {
@@ -74,6 +72,7 @@ public class EasyJson implements JsonHelper {
         return objectMapper.readValue(text, clazz);
     }
 
+    @Override
     @SneakyThrows
     public <T> List<T> toListObj(Class<T> clazz) {
         // 创建一个表示 List<T> 的 TypeReference
@@ -103,7 +102,7 @@ public class EasyJson implements JsonHelper {
         return objectMapper.readValue(text, typeReference);
     }
 
-
+    @Override
     public EasyJson op(String expression) {
         JsonNode result = get(expression, JsonNode.class);
         return of(result);
@@ -123,6 +122,7 @@ public class EasyJson implements JsonHelper {
      * @param clazz      返回类型
      * @return 表达式的值
      */
+    @Override
     public <T> T get(String expression, Class<T> clazz) {
         String[] depth = expression.split("\\.");
         Object object = getValByExpression(root, depth[0]);
@@ -140,6 +140,11 @@ public class EasyJson implements JsonHelper {
             object = getValByExpression(object, depth[i]);
         }
         return (JsonNode) object;
+    }
+
+    @Override
+    public JsonNode root() {
+        return this.root;
     }
 
     private Object getValByExpression(Object object, String expression) {
@@ -205,12 +210,13 @@ public class EasyJson implements JsonHelper {
         return keys;
     }
 
-
+    @Override
     public JsonHelper put(String exp, String key, Object value) {
         JsonNode result = get(exp, JsonNode.class);
         return _put(result, key, value);
     }
 
+    @Override
     public JsonHelper put(String key, Object value) {
         return _put(root, key, value);
     }

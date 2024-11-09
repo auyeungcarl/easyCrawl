@@ -57,6 +57,7 @@ public interface JsonHelper {
      * @return
      */
     JsonNode get(String expression);
+    JsonNode root();
 
     /**
      * 在表达式指定位置设置值
