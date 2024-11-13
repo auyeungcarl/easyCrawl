@@ -55,9 +55,9 @@ public class CURLHelper {
                 String[] headKv = head.split(":");
                 String key = headKv[0];
                 String value = headKv[1].replaceAll("^\\s+", "");
-                if(key.matches("(i?)Referer|Origin")){
+                if(key.matches("(?i)referer|origin")){
                     String urls = RegexHelper.findFirst(head,"http(s)?://.*");
-                    this.config.addHead(key,urls);
+                    this.config.addHead(key.toLowerCase(),urls);
                     continue;
                 }
                 if(key.equalsIgnoreCase("User-Agent")){

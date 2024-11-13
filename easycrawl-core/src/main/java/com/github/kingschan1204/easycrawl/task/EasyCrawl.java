@@ -56,6 +56,11 @@ public class EasyCrawl<R> {
         return this;
     }
 
+    public EasyCrawl<R> cookies(Map<String, String> map){
+        this.webAgent.cookie(map);
+        return this;
+    }
+
     public R execute() {
         Assert.notNull(webAgent, "agent对象不能为空！");
         Assert.notNull(parserFunction, "解析函数不能为空！");

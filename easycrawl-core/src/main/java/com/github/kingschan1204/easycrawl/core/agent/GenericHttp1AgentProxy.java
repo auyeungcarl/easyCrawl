@@ -36,7 +36,12 @@ public class GenericHttp1AgentProxy implements WebAgent {
     @Override
     public WebAgent config(HttpRequestConfig config) {
         if (null != config) {
+            final String referer = "referer";
             this.webAgent.config(config);
+            if (config.head.containsKey(referer)) {
+                this.webAgent.referer(config.head.get(referer));
+                config.head.remove(referer);
+            }
         }
         return this;
     }

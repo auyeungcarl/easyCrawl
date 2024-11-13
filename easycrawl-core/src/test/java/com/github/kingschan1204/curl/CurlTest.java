@@ -59,7 +59,7 @@ public class CurlTest {
     public void proxyTest() {
         String curl = """
                 curl 'https://myip.ipip.net/'
-                -x 'http://47.74.46.81:80'
+                -x 'http://localhost:27890'
                 """;
         HttpRequestConfig config = new CURLHelper(curl).getConfig();
 //        System.out.println(JsonHelper.of(config).pretty());
@@ -73,27 +73,55 @@ public class CurlTest {
     @Test
     public void curlGetTest() {
         String curl = """
-                curl 'https://www.szse.cn/api/report/ShowReport/data?SHOWTYPE=JSON&CATALOGID=1803_after&TABKEY=tab1&txtQueryDate=2024-09-03&random=0.9810874356934038' \\
-                  -H 'Accept: application/json, text/javascript, */*; q=0.01' \\
-                  -H 'Accept-Language: zh-CN,zh;q=0.9' \\
-                  -H 'Connection: keep-alive' \\
-                  -H 'Content-Type: application/json' \\
-                  -H 'DNT: 1' \\
-                  -H 'Referer: https://www.szse.cn/market/stock/indicator/index.html' \\
-                  -H 'Sec-Fetch-Dest: empty' \\
-                  -H 'Sec-Fetch-Mode: cors' \\
-                  -H 'Sec-Fetch-Site: same-origin' \\
-                  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36' \\
-                  -H 'X-Request-Type: ajax' \\
-                  -H 'X-Requested-With: XMLHttpRequest' \\
-                  -H 'sec-ch-ua: "Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"' \\
-                  -H 'sec-ch-ua-mobile: ?0' \\
-                  -H 'sec-ch-ua-platform: "Windows"' 
+                curl 'https://push2his.eastmoney.com/api/qt/stock/kline/get?cb=&secid=1.000985&ut=fa5fd1943c7b386f172d6893dbfba10b&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61&klt=101&fqt=1&beg=0&end=20500101&smplmt=460&lmt=1000000&_=1728608136951' \\
+                   -H 'accept: */*' \\
+                   -H 'accept-language: zh-CN,zh;q=0.9' \\
+                   -H 'cache-control: no-cache' \\
+                   -H 'cookie: qgqp_b_id=25b0352482c49ebfb8db15946d573136; HAList=ty-1-000985-%u4E2D%u8BC1%u5168%u6307%2Cty-0-000001-%u5E73%u5B89%u94F6%u884C%2Cty-1-603777-%u6765%u4F0A%u4EFD; websitepoptg_api_time=1728608158717; st_si=14672063260840; st_pvi=54548857357044; st_sp=2024-03-28%2010%3A55%3A44; st_inirUrl=https%3A%2F%2Fxueqiu.com%2FS%2FSH563080; st_sn=2; st_psi=20241011085816140-113200302671-8926879779; st_asi=delete' \\
+                   -H 'dnt: 1' \\
+                   -H 'pragma: no-cache' \\
+                   -H 'referer: https://quote.eastmoney.com/zs000985.html?jump_to_web=true' \\
+                   -H 'sec-ch-ua: "Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"' \\
+                   -H 'sec-ch-ua-mobile: ?0' \\
+                   -H 'sec-ch-ua-platform: "Windows"' \\
+                   -H 'sec-fetch-dest: script' \\
+                   -H 'sec-fetch-mode: no-cors' \\
+                   -H 'sec-fetch-site: same-site' \\
+                   -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
                 """;
         HttpRequestConfig config = new CURLHelper(curl).getConfig();
         System.out.println(JsonHelper.of(config).pretty());
         JsonHelper result = new EasyCrawl<JsonHelper>()
                 .webAgent(WebAgent.defaultAgent(config))
+                .analyze(WebAgent::getJson)
+                .execute();
+        System.out.println(result);
+    }
+
+    @DisplayName("sz")
+    @Test
+    public void tradeDateTest() {
+        String curl = """
+                curl 'https://www.szse.cn/api/report/exchange/onepersistenthour/monthList?month=${month}&v=${timestamp}' \\
+                  -H 'Accept: */*' \\
+                  -H 'Accept-Language: zh-CN,zh;q=0.9' \\
+                  -H 'Cache-Control: no-cache' \\
+                  -H 'Connection: keep-alive' \\
+                  -H 'DNT: 1' \\
+                  -H 'Pragma: no-cache' \\
+                  -H 'Referer: https://www.szse.cn/disclosure/index.html' \\
+                  -H 'Sec-Fetch-Dest: empty' \\
+                  -H 'Sec-Fetch-Mode: cors' \\
+                  -H 'Sec-Fetch-Site: same-origin' \\
+                  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36' \\
+                  -H 'X-Requested-With: XMLHttpRequest' \\
+                  -H 'sec-ch-ua: "Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"' \\
+                  -H 'sec-ch-ua-mobile: ?0' \\
+                  -H 'sec-ch-ua-platform: "Windows"'
+                """;
+        JsonHelper result = new EasyCrawl<JsonHelper>()
+                .webAgent(curl)
+                .args("month","2024-10")
                 .analyze(WebAgent::getJson)
                 .execute();
         System.out.println(result);

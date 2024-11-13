@@ -5,8 +5,6 @@ import java.security.MessageDigest;
 public class Md5Helper {
     public String md5(String text) {
         try {
-            // Sample input string
-            String input = "Hello, World!";
 
             // Get an instance of MD5 MessageDigest
             MessageDigest md = MessageDigest.getInstance("MD5");
