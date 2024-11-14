@@ -78,9 +78,10 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long period, TimeUnit unit) {
         Runnable conditionalCommand = () -> {
-            if (condition.get()) {
+            if(null == condition || condition.get()){
                 command.run();
             }
+
         };
         return super.scheduleWithFixedDelay(conditionalCommand, initialDelay, period, unit);
     }
@@ -88,7 +89,7 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
         Runnable conditionalCommand = () -> {
-            if (condition.get()) {
+            if(null == condition || condition.get()){
                 command.run();
             }
         };

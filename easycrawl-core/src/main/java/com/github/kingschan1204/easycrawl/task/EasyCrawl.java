@@ -6,15 +6,19 @@ import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.http.UrlHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import com.github.kingschan1204.easycrawl.helper.validation.Assert;
+import com.github.kingschan1204.easycrawl.thread.TaskScheduledThreadPool;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 2023-4-11
+ *
  * @author kingschan
  */
 @Slf4j
@@ -22,7 +26,7 @@ public class EasyCrawl<R> {
 
     private WebAgent webAgent;
     private Function<WebAgent, R> parserFunction;
-    private Map<String,Object> argsMap;
+    private Map<String, Object> argsMap;
 
     public EasyCrawl<R> webAgent(WebAgent webAgent) {
         this.webAgent = webAgent;
@@ -40,23 +44,23 @@ public class EasyCrawl<R> {
         return this;
     }
 
-    public EasyCrawl<R> args(String key,Object value){
-        if(null == argsMap){
+    public EasyCrawl<R> args(String key, Object value) {
+        if (null == argsMap) {
             argsMap = new HashMap<>();
         }
-        argsMap.put(key,value);
+        argsMap.put(key, value);
         return this;
     }
 
-    public EasyCrawl<R> args(Map<String, Object> map){
-        if(null == argsMap){
+    public EasyCrawl<R> args(Map<String, Object> map) {
+        if (null == argsMap) {
             argsMap = map;
         }
         this.argsMap.putAll(map);
         return this;
     }
 
-    public EasyCrawl<R> cookies(Map<String, String> map){
+    public EasyCrawl<R> cookies(Map<String, String> map) {
         this.webAgent.cookie(map);
         return this;
     }
@@ -82,9 +86,17 @@ public class EasyCrawl<R> {
     }
 
 
+    public void schedule(long delay, TimeUnit timeUnit, Consumer<R> callback) {
+        TaskScheduledThreadPool pool = new TaskScheduledThreadPool(null);
+        pool.scheduleWithFixedDelay(() -> {
+            R result = execute();
+            callback.accept(result);
+        }, 0, 1, TimeUnit.SECONDS);
+    }
 
     /**
      * restApi json格式自动获取所有分页
+     *
      * @param map          运行参数
      * @param pageIndexKey 页码key
      * @param totalKey     总记录条数key

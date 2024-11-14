@@ -38,7 +38,7 @@ public class GenericHttp1AgentProxy implements WebAgent {
         if (null != config) {
             final String referer = "referer";
             this.webAgent.config(config);
-            if (config.head.containsKey(referer)) {
+            if (null != config.head && config.head.containsKey(referer)) {
                 this.webAgent.referer(config.head.get(referer));
                 config.head.remove(referer);
             }
