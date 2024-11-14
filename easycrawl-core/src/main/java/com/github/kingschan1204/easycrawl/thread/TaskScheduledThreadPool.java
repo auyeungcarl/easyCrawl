@@ -2,17 +2,17 @@ package com.github.kingschan1204.easycrawl.thread;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
 /**
  * @author kingschan
  */
 @Slf4j
-public class MonitorScheduledThreadPool extends ScheduledThreadPoolExecutor {
+public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
 
 
     /**
@@ -32,16 +32,27 @@ public class MonitorScheduledThreadPool extends ScheduledThreadPoolExecutor {
      */
     private Double runMillSeconds = 0.0;
 
+    private final Supplier<Boolean> condition;
+
 
     boolean isPause = false;
     ReentrantLock lock = new ReentrantLock();
-    Condition condition = lock.newCondition();
+    Condition conditionLock = lock.newCondition();
 
 
-    public MonitorScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler,AtomicInteger errorNumber,Integer maxErrorNumber) {
+    public TaskScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler, AtomicInteger errorNumber, Integer maxErrorNumber, Supplier<Boolean> condition) {
         super(corePoolSize, threadFactory, handler);
         this.errorNumber = errorNumber;
         this.maxErrorNumber = maxErrorNumber;
+        this.condition = condition;
+    }
+
+    public TaskScheduledThreadPool( Supplier<Boolean> condition) {
+//        Executors.defaultThreadFactory()
+        super(10, new TaskThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+        this.errorNumber = new AtomicInteger(0);
+        this.maxErrorNumber = 3;
+        this.condition = condition;
     }
 
     @Override
@@ -54,13 +65,34 @@ public class MonitorScheduledThreadPool extends ScheduledThreadPoolExecutor {
                 long ms = 10L;
                 log.info("{} 任务已被暂停!", t.getName());
                 Thread.sleep(ms);
-                condition.await();
+                conditionLock.await();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
+    }
+
+
+    @Override
+    public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long period, TimeUnit unit) {
+        Runnable conditionalCommand = () -> {
+            if (condition.get()) {
+                command.run();
+            }
+        };
+        return super.scheduleWithFixedDelay(conditionalCommand, initialDelay, period, unit);
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+        Runnable conditionalCommand = () -> {
+            if (condition.get()) {
+                command.run();
+            }
+        };
+        return super.scheduleAtFixedRate(conditionalCommand, initialDelay, period, unit);
     }
 
     @Override
@@ -111,7 +143,7 @@ public class MonitorScheduledThreadPool extends ScheduledThreadPoolExecutor {
     public void resume() {
         lock.lock();
         isPause = false;
-        condition.signalAll();
+        conditionLock.signalAll();
         lock.unlock();
     }
 
