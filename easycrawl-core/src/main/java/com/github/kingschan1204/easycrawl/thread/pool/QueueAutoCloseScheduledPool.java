@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 参数队列为空 自动关闭线程池
+ *
  * @author kingschan
  * 2024-11-14
  */
@@ -47,7 +48,6 @@ public class QueueAutoCloseScheduledPool extends NomalScheduledPool {
                 shutdownNow();
                 log.warn("参数队列为空，关闭线程！");
             }
-
         };
         return conditionalCommand;
     }

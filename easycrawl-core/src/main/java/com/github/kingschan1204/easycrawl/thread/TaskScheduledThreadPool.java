@@ -32,13 +32,17 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
      */
     private Double runMillSeconds = 0.0;
 
-    private final Supplier<Boolean> condition;
+    private Supplier<Boolean> condition;
 
 
     boolean isPause = false;
     ReentrantLock lock = new ReentrantLock();
     Condition conditionLock = lock.newCondition();
 
+
+    public TaskScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+        super(corePoolSize, threadFactory, handler);
+    }
 
     public TaskScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler, AtomicInteger errorNumber, Integer maxErrorNumber, Supplier<Boolean> condition) {
         super(corePoolSize, threadFactory, handler);
@@ -47,7 +51,7 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
         this.condition = condition;
     }
 
-    public TaskScheduledThreadPool( Supplier<Boolean> condition) {
+    public TaskScheduledThreadPool(Supplier<Boolean> condition) {
 //        Executors.defaultThreadFactory()
         super(10, new TaskThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
         this.errorNumber = new AtomicInteger(0);
@@ -78,7 +82,7 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long period, TimeUnit unit) {
         Runnable conditionalCommand = () -> {
-            if(null == condition || condition.get()){
+            if (null == condition || condition.get()) {
                 command.run();
             }
 
@@ -89,7 +93,7 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
         Runnable conditionalCommand = () -> {
-            if(null == condition || condition.get()){
+            if (null == condition || condition.get()) {
                 command.run();
             }
         };
