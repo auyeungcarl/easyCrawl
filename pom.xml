@@ -6,7 +6,7 @@
 
     <groupId>com.github.kingschan1204</groupId>
     <artifactId>easyCrawl</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>easycrawl-core</module>
