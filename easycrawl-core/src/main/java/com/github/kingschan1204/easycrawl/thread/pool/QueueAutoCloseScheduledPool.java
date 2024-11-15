@@ -41,7 +41,7 @@ public class QueueAutoCloseScheduledPool extends NomalScheduledPool {
 
     Runnable build(Runnable command) {
         Runnable conditionalCommand = () -> {
-            if (!queue.isEmpty() && queue.size() > 0) {
+            if (queue.size() > 0) {
                 command.run();
             } else {
                 shutdownNow();
