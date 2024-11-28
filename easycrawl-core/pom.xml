@@ -104,6 +104,41 @@
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
+
+            <!-- 使用 maven-deploy-plugin 来对部署内容进行更精细控制，确保排除 logback.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <!-- 指定要部署的文件集，这里可以根据项目实际需要调整，下面示例是一种常见的方式 -->
+                    <files>
+                        <file>
+                            <!-- 构建后的主 artifact（比如项目生成的 JAR 文件等） -->
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <type>${project.packaging}</type>
+                            <!-- 明确排除不想部署的文件，此处排除 logback.xml -->
+                            <excludes>
+                                <exclude>logback.xml</exclude>
+                            </excludes>
+                        </file>
+                    </files>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <!-- 阿里云效自建maven仓库   -->
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2380205-release-OnkMKI/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2380205-snapshot-VjjHP6/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
