@@ -4,6 +4,7 @@ import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.result.impl.JdkHttpResultImpl;
+import com.github.kingschan1204.easycrawl.core.agent.utils.HttpFileHelper;
 import com.github.kingschan1204.easycrawl.core.agent.utils.JdkHttpHelper;
 import com.github.kingschan1204.easycrawl.core.variable.ScanVariable;
 import com.github.kingschan1204.easycrawl.helper.http.ResponseHeadHelper;
@@ -157,6 +158,7 @@ public class JdkHttpAgent implements WebAgent {
         String referer = null != this.config.getReferer() ? ScanVariable.parser(this.config.getReferer(), data).trim() : null;
         this.config.setUrl(httpUrl);
         this.config.setReferer(referer);
+        this.config.addHead("Accept-Encoding", "gzip, deflate");
         HttpResponse response = new JdkHttpHelper(config).request();
         this.result = new JdkHttpResultImpl(response,start);
         return this;
@@ -179,39 +181,40 @@ public class JdkHttpAgent implements WebAgent {
 
     @Override
     public File getFile() {
-        Assert.notNull(this.result, "返回对象为空！或者程序还未执行execute方法！");
-        ResponseHeadHelper headHelper = ResponseHeadHelper.of(result.headers());
-        Assert.isTrue(headHelper.fileContent(), "非文件流请求，无法输出文件！");
-        String defaultFileName = null;
-        File file = null;
-        if (result.statusCode() != 200) {
-            log.error("文件下载失败：{}", this.config.getUrl());
-            throw new RuntimeException(String.format("文件下载失败：%s 返回码:%s", this.config.getUrl(), result.statusCode()));
-        }
-        try {
-            defaultFileName = headHelper.getFileName();
-            //文件名优先使用指定的文件名，如果没有指定 则获取自动识别的文件名
-            this.config.setFileName(String.valueOf(this.config.getFileName()).matches(RegexHelper.REGEX_FILE_NAME) ? this.config.getFileName() : defaultFileName);
-            Assert.notNull(this.config.getFileName(), "文件名不能为空！");
-            String path = String.format("%s%s", this.config.getFolder(), this.config.getFileName());
-            // output here
-            log.info("输出文件：{}", path);
-            FileOutputStream out = null;
-            file = new File(path);
-            try {
-                out = (new FileOutputStream(file));
-                out.write(result.bodyAsByes());
-            } catch (Exception ex) {
-                log.error("文件下载失败：{} {}", this.config.getUrl(), ex);
-                ex.printStackTrace();
-            } finally {
-                assert out != null;
-                out.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        return file;
+        return HttpFileHelper.downloadFile(result,config);
+//        Assert.notNull(this.result, "返回对象为空！或者程序还未执行execute方法！");
+//        ResponseHeadHelper headHelper = ResponseHeadHelper.of(result.headers());
+//        Assert.isTrue(headHelper.fileContent(), "非文件流请求，无法输出文件！");
+//        String defaultFileName = null;
+//        File file = null;
+//        if (result.statusCode() != 200) {
+//            log.error("文件下载失败：{}", this.config.getUrl());
+//            throw new RuntimeException(String.format("文件下载失败：%s 返回码:%s", this.config.getUrl(), result.statusCode()));
+//        }
+//        try {
+//            defaultFileName = headHelper.getFileName();
+//            //文件名优先使用指定的文件名，如果没有指定 则获取自动识别的文件名
+//            this.config.setFileName(String.valueOf(this.config.getFileName()).matches(RegexHelper.REGEX_FILE_NAME) ? this.config.getFileName() : defaultFileName);
+//            Assert.notNull(this.config.getFileName(), "文件名不能为空！");
+//            String path = String.format("%s%s", this.config.getFolder(), this.config.getFileName());
+//            // output here
+//            log.info("输出文件：{}", path);
+//            FileOutputStream out = null;
+//            file = new File(path);
+//            try {
+//                out = (new FileOutputStream(file));
+//                out.write(result.bodyAsByes());
+//            } catch (Exception ex) {
+//                log.error("文件下载失败：{} {}", this.config.getUrl(), ex);
+//                ex.printStackTrace();
+//            } finally {
+//                assert out != null;
+//                out.close();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
+//        return file;
     }
 }

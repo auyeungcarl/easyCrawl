@@ -3,8 +3,6 @@ package com.github.kingschan1204.easycrawl.core.agent.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jsoup.Connection;
-
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,22 +87,6 @@ public class HttpRequestConfig {
         this.cookie.put(key,value);
     }
 
-    public Connection.Method method() {
-        Connection.Method m;
-        switch (this.method) {
-            case GET:
-                m = Connection.Method.GET;
-                break;
-            case POST:
-                m = Connection.Method.POST;
-                break;
-            case PUT:
-                m = Connection.Method.PUT;
-                break;
-            default:
-                throw new RuntimeException("目前只支持：get,post,put 方法！");
-        }
-        return m;
-    }
+
 
 }

@@ -3,6 +3,7 @@ package com.github.kingschan1204.easycrawl.core.agent;
 
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.impl.JdkHttpAgent;
+import com.github.kingschan1204.easycrawl.core.agent.impl.JsoupHttp1Agent;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.StatusPrintInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.TranscodingInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
@@ -42,8 +43,8 @@ public interface WebAgent {
     static WebAgent defaultAgent(HttpRequestConfig config) {
         GenericHttp1AgentProxy proxy = new GenericHttp1AgentProxy(
                 new JdkHttpAgent(),
-                new StatusPrintInterceptorImpl(),
-                new TranscodingInterceptorImpl()
+                new StatusPrintInterceptorImpl()
+                ,new TranscodingInterceptorImpl()
         );
         proxy.config(config);
         return proxy;

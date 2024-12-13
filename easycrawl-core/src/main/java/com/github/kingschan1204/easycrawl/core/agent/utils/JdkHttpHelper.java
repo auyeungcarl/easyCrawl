@@ -57,6 +57,9 @@ public class JdkHttpHelper {
 //        if (config.getRequestBody() != null) {
 //            builder.POST(HttpRequest.BodyPublishers.ofString(config.getRequestBody()));
 //        }
+        if(null != config.getReferer()){
+            builder.header("Referer",config.getReferer());
+        }
         switch (config.getMethod()) {
             case GET -> builder.GET();
             case POST -> builder.POST(HttpRequest.BodyPublishers.ofString(config.getRequestBody()));
@@ -79,7 +82,8 @@ public class JdkHttpHelper {
             HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return response;
         } else {
-            HttpResponse<String> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofString());
+//            HttpResponse<String> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return response;
         }
 

@@ -16,6 +16,8 @@ public class TranscodingInterceptorImpl implements AfterInterceptor {
     @Override
     public HttpResult interceptor(Map<String, Object> data, WebAgent webAgent) {
         HttpResult result = webAgent.getResult();
+        System.out.println(result.headers());
+//        System.out.println(result.body());
         String charset = result.charset();
         String contentType = result.contentType();
         //	<meta http-equiv="Content-Type" content="text/html; charset=gbk"/>
@@ -26,7 +28,11 @@ public class TranscodingInterceptorImpl implements AfterInterceptor {
             charset = RegexHelper.findFirst(text, "(?i)charSet(\\s+)?=.*\"").replaceAll("(?i)charSet|=|\"|\\s", "");
             if (!charset.isEmpty()) {
                 log.debug("编码提取成功,将自动转码：{}", charset);
-                result.setBody(transcoding(result.bodyAsByes(), charset));
+                try{
+                    result.setBody(transcoding(result.bodyAsByes(), charset));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             } else {
                 log.warn("自动提取编码失败！");
             }
