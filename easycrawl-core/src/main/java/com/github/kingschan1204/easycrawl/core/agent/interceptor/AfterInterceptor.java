@@ -1,7 +1,7 @@
 package com.github.kingschan1204.easycrawl.core.agent.interceptor;
 
-import com.github.kingschan1204.easycrawl.core.agent.AgentResult;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
+import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 
 import java.util.Map;
 
@@ -10,6 +10,6 @@ import java.util.Map;
  */
 public interface AfterInterceptor {
 
-    AgentResult interceptor(Map<String, Object> data, WebAgent webAgent);
+    HttpResult interceptor(Map<String, Object> data, WebAgent webAgent);
 
 }

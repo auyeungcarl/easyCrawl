@@ -24,7 +24,7 @@ public class ProxyTest {
     public void proxyTest() {
         String result = new EasyCrawl<String>()
                 .webAgent(WebAgent.defaultAgent().referer(apiUrl).useAgent(useAgent).url(apiUrl).proxy(proxy))
-                .analyze(r -> r.getResult().getBody()).execute();
+                .analyze(r -> r.getResult().body()).execute();
         System.out.println(result);
     }
 }

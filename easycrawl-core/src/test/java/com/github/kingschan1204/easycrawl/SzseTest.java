@@ -83,7 +83,7 @@ public class SzseTest {
         String url = new UrlHelper(apiUrl).set("month", month).getUrl();
         TreeMap<String, Boolean> result = new EasyCrawl< TreeMap<String, Boolean>>()
                 .webAgent(WebAgent.defaultAgent().referer(url).useAgent(useAgent).url(apiUrl))
-                .analyze(r -> parserData(r.getResult().getBody()))
+                .analyze(r -> parserData(r.getResult().body()))
                 .execute();
         System.out.println(result);
     }

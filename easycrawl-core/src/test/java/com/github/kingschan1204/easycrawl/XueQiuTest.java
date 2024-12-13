@@ -1,9 +1,7 @@
 package com.github.kingschan1204.easycrawl;
 
-import com.github.kingschan1204.easycrawl.core.agent.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.helper.collections.MapUtil;
-import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import com.github.kingschan1204.easycrawl.helper.math.MathHelper;
 import com.github.kingschan1204.easycrawl.task.EasyCrawl;
@@ -98,7 +96,7 @@ public class XueQiuTest {
         String referer = "https://xueqiu.com/S/SH600887";
         String result = new EasyCrawl<String>()
                 .webAgent(WebAgent.defaultAgent().referer(referer).cookie(cookies).url(apiUrl))
-                .analyze(r -> r.getResult().getBody()).execute();
+                .analyze(r -> r.getResult().body()).execute();
         System.out.println(result);
     }
 
@@ -125,7 +123,8 @@ public class XueQiuTest {
         String apiUrl = "https://stock.xueqiu.com/v5/stock/finance/cn/balance.json?symbol=SZ002304&type=all&is_detail=true&count=50&timestamp=";
         String referer = "https://xueqiu.com/snowman/S/SZ002304/detail";
         JsonHelper result = new EasyCrawl<JsonHelper>()
-                .webAgent(WebAgent.defaultAgent().referer(referer).cookie(getXQCookies()).url(apiUrl))
+                .webAgent(WebAgent.defaultAgent().referer(referer).url(apiUrl))
+                .cookies(getXQCookies())
                 .analyze(WebAgent::getJson)
                 .execute();
         // inventory 存货
@@ -172,33 +171,36 @@ public class XueQiuTest {
     @Test
     public void kline() {
         String curl = """
-                curl 'https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol=SZ399001&begin=1689177600000&period=day&type=before&count=-142&indicator=kline,pe,pb,ps,pcf,market_capital,agt,ggt,balance' \\
-                  -H 'accept: application/json, text/plain, */*' \\
-                  -H 'accept-language: zh-CN,zh;q=0.9' \\
-                  -H 'cache-control: no-cache' \\
-                  -H 'dnt: 1' \\
-                  -H 'origin: https://xueqiu.com' \\
-                  -H 'pragma: no-cache' \\
-                  -H 'priority: u=1, i' \\
-                  -H 'referer: https://xueqiu.com/S/SZ399001' \\
-                  -H 'sec-ch-ua: "Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"' \\
-                  -H 'sec-ch-ua-mobile: ?0' \\
-                  -H 'sec-ch-ua-platform: "Windows"' \\
-                  -H 'sec-fetch-dest: empty' \\
-                  -H 'sec-fetch-mode: cors' \\
-                  -H 'sec-fetch-site: same-site' \\
-                  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+                curl 'https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol=SZ399001&begin=1732682178003&period=day&type=before&count=-284&indicator=kline,pe,pb,ps,pcf,market_capital,agt,ggt,balance&md5__1632=n4%2BxuDBD0DcGGQeex0v%2BbDy7zQitQOOdeHe4D' \\
+                -H 'accept: application/json, text/plain, */*' \\
+                -H 'accept-language: zh-CN,zh;q=0.9' \\
+                -H 'cache-control: no-cache' \\
+                -H 'dnt: 1' \\
+                -H 'origin: https://xueqiu.com' \\
+                -H 'pragma: no-cache' \\
+                -H 'priority: u=1, i' \\
+                -H 'referer: https://xueqiu.com/S/SZ399001?md5__1038=iq%2BxBDcDgDRiG%3DQDsD7me0%3DGO7de%2Fxq20BbD' \\
+                -H 'sec-ch-ua: "Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"' \\
+                -H 'sec-ch-ua-mobile: ?0' \\
+                -H 'sec-ch-ua-platform: "Windows"' \\
+                -H 'sec-fetch-dest: empty' \\
+                -H 'sec-fetch-mode: cors' \\
+                -H 'sec-fetch-site: same-site' \\
+                -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
                 """;
-        JsonHelper result = new EasyCrawl<JsonHelper>()
+        Map<String,String> cookies = getXQCookies();
+        System.out.println(cookies);
+        /*JsonHelper result = new EasyCrawl<JsonHelper>()
                 .webAgent(curl)
-                .cookies(getXQCookies())
+                .cookies(cookies)
                 .analyze(WebAgent::getJson)
                 .execute();
-        System.out.println(result);
+        System.out.println(result);*/
+
     }
 
     Map<String, String> getXQCookies() {
-        String cookieUrl = "https://xueqiu.com";
+        String cookieUrl = "https://xueqiu.com/about";
         return WebAgent.getCookies(cookieUrl);
     }
 }

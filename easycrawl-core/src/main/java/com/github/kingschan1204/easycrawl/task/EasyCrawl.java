@@ -1,6 +1,6 @@
 package com.github.kingschan1204.easycrawl.task;
 
-import com.github.kingschan1204.easycrawl.core.agent.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.http.UrlHelper;
@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * 2023-4-11

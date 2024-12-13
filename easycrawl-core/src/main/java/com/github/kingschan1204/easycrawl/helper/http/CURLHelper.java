@@ -1,6 +1,6 @@
 package com.github.kingschan1204.easycrawl.helper.http;
 
-import com.github.kingschan1204.easycrawl.core.agent.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.helper.regex.RegexHelper;
 
 import java.net.InetSocketAddress;
@@ -77,7 +77,7 @@ public class CURLHelper {
             }
             if (text.startsWith("--data-raw")) {
                 String body = RegexHelper.findFirst(text, QUOTATION_MARKS, 1);
-                this.config.setBody(body);
+                this.config.setRequestBody(body);
             }
             if(text.matches("^(--proxy|-x).*")){
                 String body = RegexHelper.findFirst(text, QUOTATION_MARKS, 1);

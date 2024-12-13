@@ -1,8 +1,11 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
 
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.impl.JdkHttpAgent;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.StatusPrintInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.TranscodingInterceptorImpl;
+import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 
 import java.io.File;
@@ -38,7 +41,7 @@ public interface WebAgent {
 
     static WebAgent defaultAgent(HttpRequestConfig config) {
         GenericHttp1AgentProxy proxy = new GenericHttp1AgentProxy(
-                new GenericHttp1Agent(),
+                new JdkHttpAgent(),
                 new StatusPrintInterceptorImpl(),
                 new TranscodingInterceptorImpl()
         );
@@ -47,7 +50,7 @@ public interface WebAgent {
     }
 
     static Map<String, String> getCookies(String url) {
-        return defaultAgent().url(url).execute(null).getResult().getCookies();
+        return defaultAgent().url(url).execute(null).getResult().cookies();
     }
 
     HttpRequestConfig getConfig();
@@ -84,7 +87,7 @@ public interface WebAgent {
 
     WebAgent execute(Map<String, Object> data);
 
-    AgentResult getResult();
+    HttpResult getResult();
 
     JsonHelper getJson();
 

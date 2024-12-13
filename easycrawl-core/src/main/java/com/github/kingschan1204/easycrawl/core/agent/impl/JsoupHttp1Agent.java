@@ -1,5 +1,8 @@
-package com.github.kingschan1204.easycrawl.core.agent;
+package com.github.kingschan1204.easycrawl.core.agent.impl;
 
+import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.utils.JsoupHelper;
 import com.github.kingschan1204.easycrawl.core.variable.ScanVariable;
 import com.github.kingschan1204.easycrawl.helper.http.ResponseHeadHelper;
@@ -20,21 +23,21 @@ import java.util.Map;
  * 2023-4-24
  */
 @Slf4j
-public class GenericHttp1Agent implements WebAgent {
+public class JsoupHttp1Agent implements WebAgent {
 
     private HttpRequestConfig config;
-    private AgentResult result;
+    private HttpResult result;
 
-    public GenericHttp1Agent(HttpRequestConfig config) {
+    public JsoupHttp1Agent(HttpRequestConfig config) {
         this.config = config;
     }
 
-    public GenericHttp1Agent() {
+    public JsoupHttp1Agent() {
         this.config = new HttpRequestConfig();
     }
 
     public static WebAgent of(HttpRequestConfig config) {
-        return new GenericHttp1Agent(config);
+        return new JsoupHttp1Agent(config);
     }
 
 //
@@ -81,10 +84,10 @@ public class GenericHttp1Agent implements WebAgent {
 
     @Override
     public WebAgent head(String key, String value) {
-        if(null == this.config.getHead()){
+        if (null == this.config.getHead()) {
             this.config.head = new HashMap<>();
         }
-        this.config.getHead().put(key,value);
+        this.config.getHead().put(key, value);
         return this;
     }
 
@@ -102,16 +105,16 @@ public class GenericHttp1Agent implements WebAgent {
 
     @Override
     public WebAgent cookie(String key, String value) {
-        if(null == this.config.getCookie()){
+        if (null == this.config.getCookie()) {
             this.config.cookie = new HashMap<>();
         }
-        this.config.getCookie().put(key,value);
+        this.config.getCookie().put(key, value);
         return this;
     }
 
     @Override
     public WebAgent timeOut(Integer timeOut) {
-        this.config.setTimeOut(timeOut);
+        this.config.setConnectTimeout(timeOut);
         return this;
     }
 
@@ -129,7 +132,7 @@ public class GenericHttp1Agent implements WebAgent {
 
     @Override
     public WebAgent body(String body) {
-        this.config.setBody(body);
+        this.config.setRequestBody(body);
         return this;
     }
 
@@ -151,37 +154,37 @@ public class GenericHttp1Agent implements WebAgent {
         String referer = null != this.config.getReferer() ? ScanVariable.parser(this.config.getReferer(), data).trim() : null;
         this.result = JsoupHelper.request(
                 httpUrl, this.config.method(),
-                this.config.getTimeOut(), this.config.getUseAgent(), referer, this.config.getHead(),
+                this.config.getConnectTimeout(), this.config.getUseAgent(), referer, this.config.getHead(),
                 this.config.getCookie(), this.config.getProxy(),
-                true, true, this.config.getBody());
+                true, true, this.config.getRequestBody());
         return this;
     }
 
     @Override
-    public AgentResult getResult() {
+    public HttpResult getResult() {
         return this.result;
     }
 
     @Override
     public JsonHelper getJson() {
-        return JsonHelper.of(this.result.getBody());
+        return JsonHelper.of(this.result.body());
     }
 
     @Override
     public String getText() {
-        return getResult().getBody();
+        return getResult().body();
     }
 
     @Override
     public File getFile() {
         Assert.notNull(this.result, "返回对象为空！或者程序还未执行execute方法！");
-        ResponseHeadHelper headHelper = ResponseHeadHelper.of(result.getHeaders());
+        ResponseHeadHelper headHelper = ResponseHeadHelper.of(result.headers());
         Assert.isTrue(headHelper.fileContent(), "非文件流请求，无法输出文件！");
         String defaultFileName = null;
         File file = null;
-        if (result.getStatusCode() != 200) {
+        if (result.statusCode() != 200) {
             log.error("文件下载失败：{}", this.config.getUrl());
-            throw new RuntimeException(String.format("文件下载失败：%s 返回码:%s", this.config.getUrl(), result.getStatusCode()));
+            throw new RuntimeException(String.format("文件下载失败：%s 返回码:%s", this.config.getUrl(), result.statusCode()));
         }
         try {
             defaultFileName = headHelper.getFileName();
@@ -195,7 +198,7 @@ public class GenericHttp1Agent implements WebAgent {
             file = new File(path);
             try {
                 out = (new FileOutputStream(file));
-                out.write(result.getBodyAsByes());
+                out.write(result.bodyAsByes());
             } catch (Exception ex) {
                 log.error("文件下载失败：{} {}", this.config.getUrl(), ex);
                 ex.printStackTrace();

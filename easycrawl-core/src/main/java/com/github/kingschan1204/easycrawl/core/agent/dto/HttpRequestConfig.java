@@ -1,4 +1,4 @@
-package com.github.kingschan1204.easycrawl.core.agent;
+package com.github.kingschan1204.easycrawl.core.agent.dto;
 
 
 import lombok.Data;
@@ -23,12 +23,14 @@ public class HttpRequestConfig {
     public String referer;
 
     public String url;
-
-    public Integer timeOut = 8000;
+    /**
+     * 超时时间  毫秒
+     */
+    public Integer connectTimeout = 10000;
 
     public String useAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 
-    public String body;
+    public String requestBody;
 
     /**
      * 代理

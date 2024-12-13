@@ -1,6 +1,6 @@
 package com.github.kingschan1204.easycrawl;
 
-import com.github.kingschan1204.easycrawl.core.agent.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.task.EasyCrawl;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class CsIndexTest {
         String cookieUrl = "https://www.csindex.com.cn/en/indices/index-detail/000300#/dataService/industryClassification";
         String reqUrl = "https://www.csindex.com.cn/csindex-home/exportExcel/security-industry-search-excel/CH";
         String referer = "https://www.csindex.com.cn/en/indices/index-detail/000300";
-        Map<String, String> cookies = WebAgent.defaultAgent().referer("https://www.csindex.com.cn").url(cookieUrl).execute(null).getResult().getCookies();
+        Map<String, String> cookies = WebAgent.defaultAgent().referer("https://www.csindex.com.cn").url(cookieUrl).execute(null).getResult().cookies();
 
         File file = new EasyCrawl<File>()
                 .webAgent(WebAgent.defaultAgent().folder("C:\\temp\\")

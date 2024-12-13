@@ -1,6 +1,8 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.AfterInterceptor;
+import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +22,7 @@ import java.util.Map;
 public class GenericHttp1AgentProxy implements WebAgent {
 
     private WebAgent webAgent;
-    private AgentResult result;
+    private HttpResult result;
     private List<AfterInterceptor> interceptors;
 
     public GenericHttp1AgentProxy(WebAgent webAgent, AfterInterceptor... afterInterceptors) {
@@ -140,7 +142,7 @@ public class GenericHttp1AgentProxy implements WebAgent {
     }
 
     @Override
-    public AgentResult getResult() {
+    public HttpResult getResult() {
         //优先拿自身对象的agentResult
         return null == result ? this.webAgent.getResult() : result;
     }

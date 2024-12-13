@@ -1,6 +1,6 @@
 package com.github.kingschan1204.curl;
 
-import com.github.kingschan1204.easycrawl.core.agent.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
@@ -65,7 +65,7 @@ public class CurlTest {
 //        System.out.println(JsonHelper.of(config).pretty());
         String result = new EasyCrawl<String>()
                 .webAgent(WebAgent.defaultAgent(config))
-                .analyze(r -> r.getResult().getBody()).execute();
+                .analyze(r -> r.getResult().body()).execute();
         System.out.println(result);
     }
 

@@ -1,6 +1,7 @@
 package com.github.kingschan1204.easycrawl.core.agent.utils;
 
-import com.github.kingschan1204.easycrawl.core.agent.AgentResult;
+import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
+import com.github.kingschan1204.easycrawl.core.agent.result.impl.JsoupHttpResultImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -15,17 +16,17 @@ import java.util.Map;
  * jsoup 通用工具
  *
  * @author kings.chan
- *  2019-03-28 10:24
+ * 2019-03-28 10:24
  **/
 @Slf4j
 public class JsoupHelper {
 
-   public static Connection buildConnection(String pageUrl, Connection.Method method,
-                                      Integer timeOut, String useAgent, String referer,
-                                      Map<String, String> heads,
-                                      Map<String, String> cookie, Proxy proxy,
-                                      Boolean ignoreContentType, Boolean ignoreHttpErrors,String body) {
-       //maxBodySize默认是1M，设置0 则为无限制
+    public static Connection buildConnection(String pageUrl, Connection.Method method,
+                                             Integer timeOut, String useAgent, String referer,
+                                             Map<String, String> heads,
+                                             Map<String, String> cookie, Proxy proxy,
+                                             Boolean ignoreContentType, Boolean ignoreHttpErrors, String body) {
+        //maxBodySize默认是1M，设置0 则为无限制
         Connection connection = Jsoup.connect(pageUrl)
                 .timeout(null == timeOut ? 8000 : timeOut)
                 .method(null == method ? Connection.Method.GET : method)
@@ -67,13 +68,13 @@ public class JsoupHelper {
      * @param referer  来源url
      * @return AgentResult
      */
-    public static AgentResult request(String pageUrl, Connection.Method method,
+    public static HttpResult request(String pageUrl, Connection.Method method,
                                       Integer timeOut, String useAgent, String referer) {
         return request(
                 pageUrl, method,
                 timeOut, useAgent, referer, null,
                 null, null,
-                true, true,null);
+                true, true, null);
     }
 
 
@@ -92,13 +93,13 @@ public class JsoupHelper {
      * @param ignoreHttpErrors  是否忽略http错误
      * @return AgentResult
      */
-    public static AgentResult request(String pageUrl, Connection.Method method,
-                                      Integer timeOut, String useAgent, String referer,
-                                      Map<String, String> heads,
-                                      Map<String, String> cookie, Proxy proxy,
-                                      Boolean ignoreContentType, Boolean ignoreHttpErrors, String body) {
+    public static HttpResult request(String pageUrl, Connection.Method method,
+                                     Integer timeOut, String useAgent, String referer,
+                                     Map<String, String> heads,
+                                     Map<String, String> cookie, Proxy proxy,
+                                     Boolean ignoreContentType, Boolean ignoreHttpErrors, String body) {
         long start = System.currentTimeMillis();
-        AgentResult agentResult;
+        HttpResult httpResult;
         Connection.Response response;
         try {
             log.debug(pageUrl);
@@ -110,17 +111,18 @@ public class JsoupHelper {
                     timeOut, useAgent, referer,
                     heads,
                     cookie, proxy,
-                    ignoreContentType, ignoreHttpErrors,body);
+                    ignoreContentType, ignoreHttpErrors, body);
             response = connection.execute();
-            agentResult = new AgentResult(start, response);
-            return agentResult;
+            httpResult = new JsoupHttpResultImpl(start, response);
+
+            return httpResult;
         } catch (SocketTimeoutException ex) {
             log.error("【网络超时】 {} 执行时间：{} 毫秒", pageUrl, System.currentTimeMillis() - start);
-            throw  new RuntimeException(ex.getMessage());
+            throw new RuntimeException(ex.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             log.error("crawlPage {} {}", pageUrl, e);
-            throw  new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
