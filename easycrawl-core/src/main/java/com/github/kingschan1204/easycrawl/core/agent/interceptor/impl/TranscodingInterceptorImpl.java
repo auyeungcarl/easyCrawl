@@ -16,8 +16,6 @@ public class TranscodingInterceptorImpl implements AfterInterceptor {
     @Override
     public HttpResult interceptor(Map<String, Object> data, WebAgent webAgent) {
         HttpResult result = webAgent.getResult();
-        System.out.println(result.headers());
-//        System.out.println(result.body());
         String charset = result.charset();
         String contentType = result.contentType();
         //	<meta http-equiv="Content-Type" content="text/html; charset=gbk"/>
