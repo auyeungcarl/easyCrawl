@@ -34,7 +34,13 @@ public class EasyCrawl<R> {
 
     public EasyCrawl<R> webAgent(String curl) {
         HttpRequestConfig config = new CURLHelper(curl).getConfig();
-        this.webAgent = WebAgent.defaultAgent(config);
+        this.webAgent = WebAgent.agent(config,null);
+        return this;
+    }
+
+    public EasyCrawl<R> webAgent(String curl, WebAgent.Engine engine) {
+        HttpRequestConfig config = new CURLHelper(curl).getConfig();
+        this.webAgent = WebAgent.agent(config,engine);
         return this;
     }
 

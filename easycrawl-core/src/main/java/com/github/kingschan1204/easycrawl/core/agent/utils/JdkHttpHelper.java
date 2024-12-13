@@ -47,7 +47,7 @@ public class JdkHttpHelper {
         }
         if (config.getHead() != null) {
             for (Map.Entry<String, String> entry : config.getHead().entrySet()) {
-                if(entry.getKey().matches("(?i)connection")){
+                if (entry.getKey().matches("(?i)connection")) {
                     continue;
                 }
                 builder.header(entry.getKey(), entry.getValue());
@@ -57,8 +57,8 @@ public class JdkHttpHelper {
 //        if (config.getRequestBody() != null) {
 //            builder.POST(HttpRequest.BodyPublishers.ofString(config.getRequestBody()));
 //        }
-        if(null != config.getReferer()){
-            builder.header("Referer",config.getReferer());
+        if (null != config.getReferer()) {
+            builder.header("Referer", config.getReferer());
         }
         switch (config.getMethod()) {
             case GET -> builder.GET();
@@ -77,13 +77,13 @@ public class JdkHttpHelper {
     }
 
     private HttpResponse httpResponse() throws Exception {
-        if (null != config.getFileName() || null != config.getFolder()) {
+        if (null != config.getFileName() || null != config.getFolder() || (null != config.getHead() && config.getHead().containsKey("Accept-Encoding"))) {
             //下载文件
             HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return response;
         } else {
-//            HttpResponse<String> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofString());
-            HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<String> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofString());
+//            HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return response;
         }
 

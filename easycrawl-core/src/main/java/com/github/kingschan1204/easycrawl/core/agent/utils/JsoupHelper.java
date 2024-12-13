@@ -102,7 +102,7 @@ public class JsoupHelper {
         HttpResult httpResult;
         Connection.Response response;
         try {
-            log.debug(pageUrl);
+//            log.debug(pageUrl);
             if (pageUrl.contains("https")) {
                 trustAllHttpsCertificates();
                 HttpsURLConnection.setDefaultHostnameVerifier(hv);

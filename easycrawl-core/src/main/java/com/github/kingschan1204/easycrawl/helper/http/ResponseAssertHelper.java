@@ -25,7 +25,7 @@ public class ResponseAssertHelper {
     }
 
     public void statusCode() {
-        log.debug("http状态：{}", result.statusCode());
+//        log.debug("http状态：{}", result.statusCode());
         if (!result.statusCode().equals(200)) {
             if (result.statusCode() >= 500) {
                 log.warn("服务器错误！");
@@ -61,7 +61,7 @@ public class ResponseAssertHelper {
         } else if (type.matches("text/plain.*")) {
             content = "text";
         }
-        log.debug("推测 http 响应类型：{}", content);
+//        log.debug("推测 http 响应类型：{}", content);
     }
 
 }

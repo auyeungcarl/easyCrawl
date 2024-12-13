@@ -20,39 +20,46 @@ import java.util.Map;
 
 public interface WebAgent {
 
-//    enum ResponseType {
-//        FILE(File.class), HTML(String.class), JSON(JsonHelper.class), TEXT(String.class);
-//        public Class<?> type;
-//
-//        ResponseType(Class<?> clazz) {
-//            type = clazz;
-//        }
-//    }
+    enum Engine {
+        JDK,
+        JSOUP,
 
-//    WebAgentNew of(HttpRequestConfig config);
+    }
 
     /**
      * 默认agent
      *
      * @return GenericHttp1Agent
      */
-    static WebAgent defaultAgent() {
-        return defaultAgent(null);
+    static WebAgent agent() {
+        return agent(null, null);
+    }
+    static WebAgent agent(Engine engine) {
+        return agent(null, engine);
     }
 
-    static WebAgent defaultAgent(HttpRequestConfig config) {
+    static WebAgent agent(HttpRequestConfig config) {
+        return agent(config, null);
+    }
+
+    static WebAgent agent(HttpRequestConfig config, Engine engine) {
+        WebAgent agent = null;
+        if (engine == null) {
+            agent = new JdkHttpAgent();
+        } else if (engine.equals(Engine.JDK)) {
+            agent = new JdkHttpAgent();
+        } else if (engine.equals(Engine.JSOUP)) {
+            agent = new JsoupHttp1Agent();
+        }
         GenericHttp1AgentProxy proxy = new GenericHttp1AgentProxy(
-                new JdkHttpAgent(),
-                new StatusPrintInterceptorImpl()
-                ,new TranscodingInterceptorImpl()
+                agent,
+                new StatusPrintInterceptorImpl(),
+                new TranscodingInterceptorImpl()
         );
         proxy.config(config);
         return proxy;
     }
 
-    static Map<String, String> getCookies(String url) {
-        return defaultAgent().url(url).execute(null).getResult().cookies();
-    }
 
     HttpRequestConfig getConfig();
 

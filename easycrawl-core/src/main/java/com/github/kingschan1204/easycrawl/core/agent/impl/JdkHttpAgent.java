@@ -7,14 +7,10 @@ import com.github.kingschan1204.easycrawl.core.agent.result.impl.JdkHttpResultIm
 import com.github.kingschan1204.easycrawl.core.agent.utils.HttpFileHelper;
 import com.github.kingschan1204.easycrawl.core.agent.utils.JdkHttpHelper;
 import com.github.kingschan1204.easycrawl.core.variable.ScanVariable;
-import com.github.kingschan1204.easycrawl.helper.http.ResponseHeadHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
-import com.github.kingschan1204.easycrawl.helper.regex.RegexHelper;
-import com.github.kingschan1204.easycrawl.helper.validation.Assert;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.http.HttpResponse;
@@ -42,13 +38,6 @@ public class JdkHttpAgent implements WebAgent {
     public static WebAgent of(HttpRequestConfig config) {
         return new JdkHttpAgent(config);
     }
-
-//
-//    @Override
-//    public WebAgentNew of(HttpRequestConfig config) {
-//        this.config = config;
-//        return this;
-//    }
 
     @Override
     public HttpRequestConfig getConfig() {
@@ -87,10 +76,10 @@ public class JdkHttpAgent implements WebAgent {
 
     @Override
     public WebAgent head(String key, String value) {
-        if(null == this.config.getHead()){
+        if (null == this.config.getHead()) {
             this.config.head = new HashMap<>();
         }
-        this.config.getHead().put(key,value);
+        this.config.getHead().put(key, value);
         return this;
     }
 
@@ -108,10 +97,10 @@ public class JdkHttpAgent implements WebAgent {
 
     @Override
     public WebAgent cookie(String key, String value) {
-        if(null == this.config.getCookie()){
+        if (null == this.config.getCookie()) {
             this.config.cookie = new HashMap<>();
         }
-        this.config.getCookie().put(key,value);
+        this.config.getCookie().put(key, value);
         return this;
     }
 
@@ -158,9 +147,9 @@ public class JdkHttpAgent implements WebAgent {
         String referer = null != this.config.getReferer() ? ScanVariable.parser(this.config.getReferer(), data).trim() : null;
         this.config.setUrl(httpUrl);
         this.config.setReferer(referer);
-        this.config.addHead("Accept-Encoding", "gzip, deflate");
+//        this.config.addHead("Accept-Encoding", "gzip, deflate");
         HttpResponse response = new JdkHttpHelper(config).request();
-        this.result = new JdkHttpResultImpl(response,start);
+        this.result = new JdkHttpResultImpl(response, start);
         return this;
     }
 
@@ -181,40 +170,6 @@ public class JdkHttpAgent implements WebAgent {
 
     @Override
     public File getFile() {
-        return HttpFileHelper.downloadFile(result,config);
-//        Assert.notNull(this.result, "返回对象为空！或者程序还未执行execute方法！");
-//        ResponseHeadHelper headHelper = ResponseHeadHelper.of(result.headers());
-//        Assert.isTrue(headHelper.fileContent(), "非文件流请求，无法输出文件！");
-//        String defaultFileName = null;
-//        File file = null;
-//        if (result.statusCode() != 200) {
-//            log.error("文件下载失败：{}", this.config.getUrl());
-//            throw new RuntimeException(String.format("文件下载失败：%s 返回码:%s", this.config.getUrl(), result.statusCode()));
-//        }
-//        try {
-//            defaultFileName = headHelper.getFileName();
-//            //文件名优先使用指定的文件名，如果没有指定 则获取自动识别的文件名
-//            this.config.setFileName(String.valueOf(this.config.getFileName()).matches(RegexHelper.REGEX_FILE_NAME) ? this.config.getFileName() : defaultFileName);
-//            Assert.notNull(this.config.getFileName(), "文件名不能为空！");
-//            String path = String.format("%s%s", this.config.getFolder(), this.config.getFileName());
-//            // output here
-//            log.info("输出文件：{}", path);
-//            FileOutputStream out = null;
-//            file = new File(path);
-//            try {
-//                out = (new FileOutputStream(file));
-//                out.write(result.bodyAsByes());
-//            } catch (Exception ex) {
-//                log.error("文件下载失败：{} {}", this.config.getUrl(), ex);
-//                ex.printStackTrace();
-//            } finally {
-//                assert out != null;
-//                out.close();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
-//        return file;
+        return HttpFileHelper.downloadFile(result, config);
     }
 }

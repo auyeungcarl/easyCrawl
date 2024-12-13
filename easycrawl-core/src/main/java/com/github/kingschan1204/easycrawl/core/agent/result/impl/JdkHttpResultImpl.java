@@ -8,10 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -104,9 +101,16 @@ public class JdkHttpResultImpl implements HttpResult {
     public String body() {
         if (this.bodyString == null) {
             try {
-                //HttpResponse<String> httpResponse = (HttpResponse<String>) response;
-                // this.bodyString = httpResponse.body();
-                this.bodyString = new String(bodyAsByes(), defaultCharset);
+
+                Set<String> set = headers().keySet();
+                //有压缩用字节 或者 文件下载 用字节
+                if (set.contains("content-encoding") || set.contains("content-disposition")) {
+                    this.bodyString = new String(bodyAsByes(), defaultCharset);
+                } else {
+                    HttpResponse<String> httpResponse = (HttpResponse<String>) response;
+                    this.bodyString = httpResponse.body();
+                }
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
