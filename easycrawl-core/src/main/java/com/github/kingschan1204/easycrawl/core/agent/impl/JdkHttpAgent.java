@@ -147,7 +147,7 @@ public class JdkHttpAgent implements WebAgent {
         String referer = null != this.config.getReferer() ? ScanVariable.parser(this.config.getReferer(), data).trim() : null;
         this.config.setUrl(httpUrl);
         this.config.setReferer(referer);
-//        this.config.addHead("Accept-Encoding", "gzip, deflate");
+        this.config.addHead("Accept-Encoding", "gzip, deflate");
         HttpResponse response = new JdkHttpHelper(config).request();
         this.result = new JdkHttpResultImpl(response, start);
         return this;

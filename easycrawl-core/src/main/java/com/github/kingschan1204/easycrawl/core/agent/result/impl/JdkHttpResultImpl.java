@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,8 +22,9 @@ public class JdkHttpResultImpl implements HttpResult {
     private final HttpResponse response;
     private String bodyString;
     private byte[] bytes;
-
-    private String defaultCharset = "UTF-8";
+    //内部
+    private String charset;
+    private String contentType;
 
     public JdkHttpResultImpl(HttpResponse response, Long timeMillis) {
         this.timeMillis = System.currentTimeMillis() - timeMillis;
@@ -46,12 +49,28 @@ public class JdkHttpResultImpl implements HttpResult {
 
     @Override
     public String charset() {
-        return null;
+        if (null == charset) {
+            this.charset = RegexHelper.findFirst(contentType(), "charset\\s*=\\s*(.*)", 1);
+            /*if ((null == charset || charset.isEmpty()) && contentType().matches("text/html.*")) {
+                log.warn("未获取到编码信息,有可能中文乱码！尝试自动提取编码！");
+                String text = RegexHelper.findFirst(body(), RegexHelper.REGEX_HTML_CHARSET);
+//                charset = RegexHelper.findFirst(text, "(?i)charSet(\\s+)?=.*\"").replaceAll("(?i)charSet|=|\"|\\s", "");
+                this.charset = RegexHelper.findFirst(text, "charset\\s*=\\s*(.*?)\"", 1);
+                if (!charset.isEmpty()) {
+                    log.debug("编码提取成功：{}", charset);
+                    this.charset = charset;
+                }
+            }*/
+        }
+        return this.charset;
     }
 
     @Override
     public String contentType() {
-        return response.headers().firstValue("Content-Type").orElse("");
+        if (contentType == null) {
+            this.contentType = response.headers().firstValue("Content-Type").orElse("");
+        }
+        return this.contentType;
     }
 
     @Override
@@ -102,14 +121,19 @@ public class JdkHttpResultImpl implements HttpResult {
         if (this.bodyString == null) {
             try {
 
-                Set<String> set = headers().keySet();
+              /*  Set<String> set = headers().keySet();
                 //有压缩用字节 或者 文件下载 用字节
                 if (set.contains("content-encoding") || set.contains("content-disposition")) {
-                    this.bodyString = new String(bodyAsByes(), defaultCharset);
+                    this.bodyString = new String(bodyAsByes(), charset());
                 } else {
                     HttpResponse<String> httpResponse = (HttpResponse<String>) response;
                     this.bodyString = httpResponse.body();
-                }
+                }*/
+
+                String charset = charset();
+                byte[] bs = bodyAsByes();
+                this.bodyString = new String(bs, charset.isEmpty() ? "UTF-8" : charset);
+
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

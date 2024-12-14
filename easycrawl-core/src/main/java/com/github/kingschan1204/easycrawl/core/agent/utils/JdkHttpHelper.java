@@ -36,7 +36,7 @@ public class JdkHttpHelper {
         if (config.getConnectTimeout() != null) {
             builder.connectTimeout(Duration.ofMillis(config.getConnectTimeout()));
         }
-
+//        builder.version(HttpClient.Version.HTTP_2);
         return builder.build();
     }
 
@@ -77,15 +77,18 @@ public class JdkHttpHelper {
     }
 
     private HttpResponse httpResponse() throws Exception {
-        if (null != config.getFileName() || null != config.getFolder() || (null != config.getHead() && config.getHead().containsKey("Accept-Encoding"))) {
+       /* if (null != config.getFileName() || null != config.getFolder() || (null != config.getHead() && config.getHead().containsKey("Accept-Encoding"))) {
             //下载文件
             HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return response;
         } else {
-            HttpResponse<String> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofString());
-//            HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
+//            HttpResponse<String> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return response;
-        }
+        }*/
+
+        HttpResponse<byte[]> response = httpClient().send(httpRequest(), HttpResponse.BodyHandlers.ofByteArray());
+        return response;
 
     }
 }

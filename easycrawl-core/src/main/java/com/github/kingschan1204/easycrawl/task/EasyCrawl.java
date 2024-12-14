@@ -1,17 +1,15 @@
 package com.github.kingschan1204.easycrawl.task;
 
-import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.http.UrlHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import com.github.kingschan1204.easycrawl.helper.validation.Assert;
-import com.github.kingschan1204.easycrawl.thread.TaskScheduledThreadPool;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -91,13 +89,7 @@ public class EasyCrawl<R> {
     }
 
 
-    public void schedule(long delay, TimeUnit timeUnit, Consumer<R> callback) {
-        TaskScheduledThreadPool pool = new TaskScheduledThreadPool(null);
-        pool.scheduleWithFixedDelay(() -> {
-            R result = execute();
-            callback.accept(result);
-        }, 0, 1, TimeUnit.SECONDS);
-    }
+
 
     /**
      * restApi json格式自动获取所有分页
