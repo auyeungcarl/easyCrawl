@@ -1,13 +1,13 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.AfterInterceptor;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.net.Proxy;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -103,16 +103,22 @@ public class GenericHttp1AgentProxy implements WebAgent {
     }
 
     @Override
-    public WebAgent proxy(Proxy proxy) {
-        this.webAgent.proxy(proxy);
+    public WebAgent proxy(ProxyConfig config) {
+        this.webAgent.proxy(config);
         return this;
     }
 
-    @Override
-    public WebAgent proxy(Proxy.Type type, String host, int port) {
-        this.webAgent.proxy(type, host, port);
-        return this;
-    }
+//    @Override
+//    public WebAgent proxy(Proxy proxy) {
+//        this.webAgent.proxy(proxy);
+//        return this;
+//    }
+//
+//    @Override
+//    public WebAgent proxy(Proxy.Type type, String host, int port) {
+//        this.webAgent.proxy(type, host, port);
+//        return this;
+//    }
 
     @Override
     public WebAgent body(String body) {

@@ -30,9 +30,9 @@ public class JdkHttpHelper {
 
     private HttpClient httpClient() {
         HttpClient.Builder builder = HttpClient.newBuilder();
-        /*if (config.getProxy() != null) {
-            builder.proxy(ProxySelector.of(config.getProxy()));
-        }*/
+        if (config.getProxy() != null) {
+            builder.proxy(new MyProxySelector(ProxyHelper.proxy(config.getProxy())));
+        }
         if (config.getConnectTimeout() != null) {
             builder.connectTimeout(Duration.ofMillis(config.getConnectTimeout()));
         }

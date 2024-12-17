@@ -2,6 +2,7 @@ package com.github.kingschan1204.easycrawl.core.agent.impl;
 
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.result.impl.JdkHttpResultImpl;
 import com.github.kingschan1204.easycrawl.core.agent.utils.HttpFileHelper;
@@ -11,8 +12,6 @@ import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,6 +110,11 @@ public class JdkHttpAgent implements WebAgent {
     }
 
     @Override
+    public WebAgent proxy(ProxyConfig config) {
+        this.config.setProxy(config);
+        return this;
+    }
+   /* @Override
     public WebAgent proxy(Proxy proxy) {
         this.config.setProxy(proxy);
         return this;
@@ -120,7 +124,7 @@ public class JdkHttpAgent implements WebAgent {
     public WebAgent proxy(Proxy.Type type, String host, int port) {
         this.config.setProxy(new Proxy(type, new InetSocketAddress(host, port)));
         return this;
-    }
+    }*/
 
     @Override
     public WebAgent body(String body) {

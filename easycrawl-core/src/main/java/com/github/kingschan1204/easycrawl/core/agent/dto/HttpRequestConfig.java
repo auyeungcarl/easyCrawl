@@ -3,7 +3,6 @@ package com.github.kingschan1204.easycrawl.core.agent.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +31,12 @@ public class HttpRequestConfig {
 
     /**
      * 代理
+     * curl -x http://user:password@192.168.1.100:8080 https://example.com
+     * curl -x http://192.168.1.100:8080 https://example.com
+     * curl -x socks5://proxy_host:proxy_port [URL]
+     * 如果 SOCKS5 代理需要认证，curl目前没有像 HTTP 代理那样直接在 URL 中嵌入用户名和密码的语法。通常需要结合其他工具或者配置来实现 一种常见的方法是使用proxychains工具
      */
-    public Proxy proxy;
+    public ProxyConfig proxy;
     /**
      * http 请求方式
      */
