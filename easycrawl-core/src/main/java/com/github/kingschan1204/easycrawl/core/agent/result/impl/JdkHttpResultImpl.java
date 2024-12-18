@@ -101,19 +101,20 @@ public class JdkHttpResultImpl implements HttpResult {
                 byte[] bytes = httpResponse.body();
                 //获取Content-Encoding响应头，判断实际使用的压缩格式
                 String contentEncoding = headers().get("content-encoding");
-                log.info("{} 编码：{} 字节数:{}", response.uri().toString(), contentEncoding, bytes.length);
+//                String contentLength = headers().get("content-length");
+//                int byteLength = null == contentLength ? httpResponse.body().length : Integer.parseInt(contentLength);
                 if ("gzip".equals(contentEncoding)) {
-                    this.bytes = decompressGzip(bytes);
+                    this.bytes = decompressGzip(httpResponse.body());
                 } else if ("deflate".equals(contentEncoding)) {
-                    this.bytes = decompressDeflate(bytes);
+                    this.bytes = decompressDeflate(httpResponse.body());
                 } else {
-                    this.bytes = bytes;
+                    this.bytes = httpResponse.body();
                 }
+                log.info("{} 编码：{} 字节数:{} ", response.uri().toString(), contentEncoding, this.bytes.length);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-
         return this.bytes;
     }
 

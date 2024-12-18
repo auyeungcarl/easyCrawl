@@ -36,6 +36,8 @@ public class JdkHttpHelper {
         if (config.getConnectTimeout() != null) {
             builder.connectTimeout(Duration.ofMillis(config.getConnectTimeout()));
         }
+        //允许重定向
+        builder.followRedirects(HttpClient.Redirect.ALWAYS);
 //        builder.version(HttpClient.Version.HTTP_2);
         return builder.build();
     }
