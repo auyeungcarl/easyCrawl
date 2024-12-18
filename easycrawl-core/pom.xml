@@ -51,11 +51,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>2.3.32</version>
-        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -141,4 +136,6 @@
             <url>https://packages.aliyun.com/maven/repository/2380205-snapshot-VjjHP6/</url>
         </snapshotRepository>
     </distributionManagement>
+
+
 </project>
