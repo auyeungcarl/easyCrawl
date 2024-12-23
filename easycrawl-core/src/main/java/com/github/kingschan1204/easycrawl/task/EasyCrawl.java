@@ -2,6 +2,7 @@ package com.github.kingschan1204.easycrawl.task;
 
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.helper.http.CURLHelper;
 import com.github.kingschan1204.easycrawl.helper.http.UrlHelper;
 import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
@@ -32,13 +33,18 @@ public class EasyCrawl<R> {
 
     public EasyCrawl<R> webAgent(String curl) {
         HttpRequestConfig config = new CURLHelper(curl).getConfig();
-        this.webAgent = WebAgent.agent(config,null);
+        this.webAgent = WebAgent.agent(config, null);
+        return this;
+    }
+
+    public EasyCrawl<R> proxy(ProxyConfig config) {
+        this.webAgent = this.webAgent.proxy(config);
         return this;
     }
 
     public EasyCrawl<R> webAgent(String curl, WebAgent.Engine engine) {
         HttpRequestConfig config = new CURLHelper(curl).getConfig();
-        this.webAgent = WebAgent.agent(config,engine);
+        this.webAgent = WebAgent.agent(config, engine);
         return this;
     }
 
@@ -87,8 +93,6 @@ public class EasyCrawl<R> {
         }
         return result;
     }
-
-
 
 
     /**
