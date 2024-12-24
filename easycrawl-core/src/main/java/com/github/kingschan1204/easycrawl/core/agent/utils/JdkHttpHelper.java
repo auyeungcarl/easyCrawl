@@ -2,6 +2,8 @@ package com.github.kingschan1204.easycrawl.core.agent.utils;
 
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -31,14 +33,17 @@ public class JdkHttpHelper {
     private HttpClient httpClient() {
         HttpClient.Builder builder = HttpClient.newBuilder();
         if (config.getProxy() != null) {
-            builder.proxy(new MyProxySelector(ProxyHelper.proxy(config.getProxy())));
+//            builder.proxy(new MyProxySelector(config.getProxy()));
+            builder.proxy(ProxySelector.of(new InetSocketAddress(config.getProxy().getHost(), config.getProxy().getPort())));
         }
         if (config.getConnectTimeout() != null) {
             builder.connectTimeout(Duration.ofMillis(config.getConnectTimeout()));
         }
         //允许重定向
-        builder.followRedirects(HttpClient.Redirect.ALWAYS);
+//        builder.followRedirects(HttpClient.Redirect.ALWAYS);
+        builder.followRedirects(HttpClient.Redirect.NORMAL);
 //        builder.version(HttpClient.Version.HTTP_2);
+        builder.version(HttpClient.Version.HTTP_1_1);
         return builder.build();
     }
 
