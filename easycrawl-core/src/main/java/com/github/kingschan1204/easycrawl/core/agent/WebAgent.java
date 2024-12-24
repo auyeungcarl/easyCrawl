@@ -34,6 +34,7 @@ public interface WebAgent {
     static WebAgent agent() {
         return agent(null, null);
     }
+
     static WebAgent agent(Engine engine) {
         return agent(null, engine);
     }
@@ -44,12 +45,9 @@ public interface WebAgent {
 
     static WebAgent agent(HttpRequestConfig config, Engine engine) {
         WebAgent agent = null;
-        if (engine == null) {
-            agent = new JdkHttpAgent();
-        } else if (engine.equals(Engine.JDK)) {
-            agent = new JdkHttpAgent();
-        } else if (engine.equals(Engine.JSOUP)) {
-            agent = new JsoupHttp1Agent();
+        switch (engine) {
+            case null, JDK -> agent = new JdkHttpAgent();
+            case JSOUP -> agent = new JsoupHttp1Agent();
         }
         GenericHttp1AgentProxy proxy = new GenericHttp1AgentProxy(
                 agent,
