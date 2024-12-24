@@ -26,7 +26,7 @@ public class ResponseAssertHelper {
 
     public void statusCode() {
 //        log.debug("http状态：{}", result.statusCode());
-        if (!result.statusCode().equals(200)) {
+        if (!String.valueOf(result.statusCode()).matches("2.*")) {
             if (result.statusCode() >= 500) {
                 log.warn("服务器错误！");
             } else if (result.statusCode() == 404) {
