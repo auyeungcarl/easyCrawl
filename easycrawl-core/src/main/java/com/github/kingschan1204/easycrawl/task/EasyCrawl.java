@@ -107,7 +107,7 @@ public class EasyCrawl<R> {
     public List<R> executePage(Map<String, Object> map, String pageIndexKey, String totalKey, Integer pageSize) {
         List<R> list = Collections.synchronizedList(new ArrayList<>());
         WebAgent data = webAgent.execute(map);
-        JsonHelper json = data.getJson();
+        JsonHelper json = data.getResult().getJson();
         Integer totalRows = json.get(totalKey).intValue();
         Integer totalPage = (totalRows + pageSize - 1) / pageSize;
         log.debug("共{}记录,每页展示{}条,共{}页", totalRows, pageSize, totalPage);

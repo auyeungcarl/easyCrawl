@@ -1,5 +1,6 @@
 package com.github.kingschan1204.easycrawl.core.agent.utils;
 
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.result.impl.JsoupHttpResultImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,17 @@ import java.util.Map;
  **/
 @Slf4j
 public class JsoupHelper {
+
+    public static Connection.Method convertMethod(HttpRequestConfig.Method method) {
+        Connection.Method m;
+        switch (method) {
+            case GET -> m = Connection.Method.GET;
+            case POST -> m = Connection.Method.POST;
+            case PUT -> m = Connection.Method.PUT;
+            default -> throw new RuntimeException("目前只支持：get,post,put 方法！");
+        }
+        return m;
+    }
 
     public static Connection buildConnection(String pageUrl, Connection.Method method,
                                              Integer timeOut, String useAgent, String referer,
@@ -58,25 +70,15 @@ public class JsoupHelper {
         return connection;
     }
 
-    /**
-     * jsoup 通用请求方法
-     *
-     * @param pageUrl  url
-     * @param method   方法
-     * @param timeOut  超时时间单位毫秒
-     * @param useAgent 请求头
-     * @param referer  来源url
-     * @return AgentResult
-     */
-    public static HttpResult request(String pageUrl, Connection.Method method,
-                                      Integer timeOut, String useAgent, String referer) {
-        return request(
-                pageUrl, method,
-                timeOut, useAgent, referer, null,
-                null, null,
-                true, true, null);
-    }
 
+    public static HttpResult request(HttpRequestConfig config) {
+        return request(
+                config.getUrl(), convertMethod(config.getMethod()),
+                config.getConnectTimeout(), config.getUseAgent(), config.getReferer(),
+                config.getHead(),
+                config.getCookie(), ProxyHelper.proxy(config.getProxy()),
+                true, true, config.getRequestBody(), config);
+    }
 
     /**
      * jsoup 通用请求方法
@@ -97,7 +99,7 @@ public class JsoupHelper {
                                      Integer timeOut, String useAgent, String referer,
                                      Map<String, String> heads,
                                      Map<String, String> cookie, Proxy proxy,
-                                     Boolean ignoreContentType, Boolean ignoreHttpErrors, String body) {
+                                     Boolean ignoreContentType, Boolean ignoreHttpErrors, String body, HttpRequestConfig config) {
         long start = System.currentTimeMillis();
         HttpResult httpResult;
         Connection.Response response;
@@ -113,7 +115,7 @@ public class JsoupHelper {
                     cookie, proxy,
                     ignoreContentType, ignoreHttpErrors, body);
             response = connection.execute();
-            httpResult = new JsoupHttpResultImpl(start, response);
+            httpResult = new JsoupHttpResultImpl(start, response, config);
 
             return httpResult;
         } catch (SocketTimeoutException ex) {

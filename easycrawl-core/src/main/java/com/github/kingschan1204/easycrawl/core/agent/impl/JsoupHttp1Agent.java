@@ -156,11 +156,9 @@ public class JsoupHttp1Agent implements WebAgent {
     public WebAgent execute(Map<String, Object> data) {
         String httpUrl = ScanVariable.parser(this.config.getUrl(), data).trim();
         String referer = null != this.config.getReferer() ? ScanVariable.parser(this.config.getReferer(), data).trim() : null;
-        this.result = JsoupHelper.request(
-                httpUrl, convertMethod(this.config.getMethod()),
-                this.config.getConnectTimeout(), this.config.getUseAgent(), referer, this.config.getHead(),
-                this.config.getCookie(), ProxyHelper.proxy(this.config.getProxy()) ,
-                true, true, this.config.getRequestBody());
+        this.config.setUrl(httpUrl);
+        this.config.setReferer(referer);
+        this.result = JsoupHelper.request(this.config);
         return this;
     }
 
@@ -169,7 +167,7 @@ public class JsoupHttp1Agent implements WebAgent {
         return this.result;
     }
 
-    @Override
+    /*@Override
     public JsonHelper getJson() {
         return JsonHelper.of(this.result.body());
     }
@@ -182,23 +180,7 @@ public class JsoupHttp1Agent implements WebAgent {
     @Override
     public File getFile() {
         return HttpFileHelper.downloadFile(result,config);
-    }
+    }*/
 
-    public static Connection.Method convertMethod(HttpRequestConfig.Method method) {
-        Connection.Method m;
-        switch (method) {
-            case GET:
-                m = Connection.Method.GET;
-                break;
-            case POST:
-                m = Connection.Method.POST;
-                break;
-            case PUT:
-                m = Connection.Method.PUT;
-                break;
-            default:
-                throw new RuntimeException("目前只支持：get,post,put 方法！");
-        }
-        return m;
-    }
+
 }

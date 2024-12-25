@@ -1,11 +1,15 @@
 package com.github.kingschan1204.easycrawl.core.agent.result.impl;
 
+import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
+import com.github.kingschan1204.easycrawl.core.agent.utils.HttpFileHelper;
+import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import com.github.kingschan1204.easycrawl.helper.regex.RegexHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -21,16 +25,22 @@ public class JdkHttpResultImpl implements HttpResult {
     //请求耗时  毫秒
     private final Long timeMillis;
     private final HttpResponse response;
+    private final HttpRequestConfig requestConfig;
     private String bodyString;
     private byte[] bytes;
     //内部
     private String charset;
     private String contentType;
 
-    public JdkHttpResultImpl(HttpResponse response, Long timeMillis) {
+    public JdkHttpResultImpl(HttpResponse response, Long timeMillis, HttpRequestConfig requestConfig) {
         this.timeMillis = System.currentTimeMillis() - timeMillis;
         this.response = response;
+        this.requestConfig = requestConfig;
+    }
 
+    @Override
+    public HttpRequestConfig getConfig() {
+        return this.requestConfig;
     }
 
     @Override
@@ -43,10 +53,6 @@ public class JdkHttpResultImpl implements HttpResult {
         return response.statusCode();
     }
 
-    @Override
-    public String statusMessage() {
-        return null;
-    }
 
     @Override
     public String charset() {
@@ -168,6 +174,21 @@ public class JdkHttpResultImpl implements HttpResult {
             heads.put(key, values.stream().collect(Collectors.joining(",")));
         }
         return heads;
+    }
+
+    @Override
+    public JsonHelper getJson() {
+        return JsonHelper.of(body());
+    }
+
+    @Override
+    public String getText() {
+        return body();
+    }
+
+    @Override
+    public File getFile() {
+        return HttpFileHelper.downloadFile(this, getConfig());
     }
 
 //--------------------------------------content-encoding 解码------------------------------------------------------------

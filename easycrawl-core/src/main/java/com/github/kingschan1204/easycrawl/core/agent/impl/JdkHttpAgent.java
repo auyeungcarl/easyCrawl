@@ -5,13 +5,10 @@ import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.result.impl.JdkHttpResultImpl;
-import com.github.kingschan1204.easycrawl.core.agent.utils.HttpFileHelper;
 import com.github.kingschan1204.easycrawl.core.agent.utils.JdkHttpHelper;
 import com.github.kingschan1204.easycrawl.core.variable.ScanVariable;
-import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -153,7 +150,7 @@ public class JdkHttpAgent implements WebAgent {
         this.config.setReferer(referer);
         this.config.addHead("Accept-Encoding", "gzip, deflate");
         HttpResponse response = new JdkHttpHelper(config).request();
-        this.result = new JdkHttpResultImpl(response, start);
+        this.result = new JdkHttpResultImpl(response, start, this.config);
         return this;
     }
 
@@ -162,7 +159,7 @@ public class JdkHttpAgent implements WebAgent {
         return this.result;
     }
 
-    @Override
+    /*@Override
     public JsonHelper getJson() {
         return JsonHelper.of(this.result.body());
     }
@@ -175,5 +172,5 @@ public class JdkHttpAgent implements WebAgent {
     @Override
     public File getFile() {
         return HttpFileHelper.downloadFile(result, config);
-    }
+    }*/
 }

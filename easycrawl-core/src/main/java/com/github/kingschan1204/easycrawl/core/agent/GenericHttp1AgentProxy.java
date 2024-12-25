@@ -153,7 +153,7 @@ public class GenericHttp1AgentProxy implements WebAgent {
         return null == result ? this.webAgent.getResult() : result;
     }
 
-    @Override
+    /*@Override
     public JsonHelper getJson() {
         return this.webAgent.getJson();
     }
@@ -166,5 +166,5 @@ public class GenericHttp1AgentProxy implements WebAgent {
     @Override
     public File getFile() {
         return this.webAgent.getFile();
-    }
+    }*/
 }

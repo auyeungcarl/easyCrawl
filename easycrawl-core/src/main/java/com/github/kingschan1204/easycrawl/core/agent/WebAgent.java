@@ -8,9 +8,7 @@ import com.github.kingschan1204.easycrawl.core.agent.impl.JsoupHttp1Agent;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.StatusPrintInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.TranscodingInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
-import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -79,13 +77,14 @@ public interface WebAgent {
 
     WebAgent cookie(String key, String value);
 
+    /**
+     * 超时时间单位毫秒
+     * @param timeOut 超时时间(毫秒)
+     * @return
+     */
     WebAgent timeOut(Integer timeOut);
 
     WebAgent proxy(ProxyConfig config);
-
-//    WebAgent proxy(Proxy proxy);
-
-//    WebAgent proxy(Proxy.Type type, String host, int port);
 
     WebAgent body(String body);
 
@@ -97,10 +96,5 @@ public interface WebAgent {
 
     HttpResult getResult();
 
-    JsonHelper getJson();
-
-    String getText();
-
-    File getFile();
 
 }
