@@ -32,6 +32,8 @@ public class JdkHttpResultImpl implements HttpResult {
     private String charset;
     private String contentType;
 
+    Map<String, String> cookies;
+
     public JdkHttpResultImpl(HttpResponse response, Long timeMillis, HttpRequestConfig requestConfig) {
         this.timeMillis = System.currentTimeMillis() - timeMillis;
         this.response = response;
@@ -82,21 +84,24 @@ public class JdkHttpResultImpl implements HttpResult {
 
     @Override
     public Map<String, String> cookies() {
-        Map<String, List<String>> map = response.headers().map();
-        Map<String, String> heads = new LinkedHashMap<>(map.size());
-        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            String key = entry.getKey();
-            List<String> values = entry.getValue();
-            if (key.equalsIgnoreCase("Set-Cookie")) {
-                for (String cookie : values) {
-                    String cookieValue = RegexHelper.findFirst(cookie, "([^;]*)(?=;)");
-                    String[] array = cookieValue.split("=");
-                    heads.put(array[0], array.length == 2 ? array[1] : "");
-                }
+        if (null == cookies) {
+            Map<String, List<String>> map = response.headers().map();
+            Map<String, String> cookieMap = new LinkedHashMap<>(map.size());
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                String key = entry.getKey();
+                List<String> values = entry.getValue();
+                if (key.equalsIgnoreCase("Set-Cookie")) {
+                    for (String cookie : values) {
+                        String cookieValue = RegexHelper.findFirst(cookie, "([^;]*)(?=;)");
+                        String[] array = cookieValue.split("=");
+                        cookieMap.put(array[0], array.length == 2 ? array[1] : "");
+                    }
 
+                }
             }
+            this.cookies = cookieMap;
         }
-        return heads;
+        return this.cookies;
     }
 
     @Override

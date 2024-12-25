@@ -32,9 +32,7 @@ public class EasyCrawl<R> {
     }
 
     public EasyCrawl<R> webAgent(String curl) {
-        HttpRequestConfig config = new CURLHelper(curl).getConfig();
-        this.webAgent = WebAgent.agent(config, null);
-        return this;
+        return webAgent(curl, null);
     }
 
     public EasyCrawl<R> proxy(ProxyConfig config) {
@@ -71,6 +69,16 @@ public class EasyCrawl<R> {
 
     public EasyCrawl<R> cookies(Map<String, String> map) {
         this.webAgent.cookie(map);
+        return this;
+    }
+
+    public EasyCrawl<R> head(String key, String value) {
+        this.webAgent.head(key, value);
+        return this;
+    }
+
+    public EasyCrawl<R> folder(String path) {
+        this.webAgent.folder(path);
         return this;
     }
 

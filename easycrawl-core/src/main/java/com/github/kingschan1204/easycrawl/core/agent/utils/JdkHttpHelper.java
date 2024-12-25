@@ -44,7 +44,7 @@ public class JdkHttpHelper {
         }
         //允许重定向
 //        builder.followRedirects(HttpClient.Redirect.ALWAYS);
-//        builder.followRedirects(HttpClient.Redirect.NORMAL);
+        builder.followRedirects(HttpClient.Redirect.NORMAL);
 //        builder.version(HttpClient.Version.HTTP_2);
 //        builder.version(HttpClient.Version.HTTP_1_1);
         return builder.build();
