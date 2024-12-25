@@ -28,7 +28,7 @@ public class JsoupHttpResultImpl implements HttpResult {
 
     @Override
     public HttpRequestConfig getConfig() {
-        return null;
+        return this.requestConfig;
     }
 
     @Override

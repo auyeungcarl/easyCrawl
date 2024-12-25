@@ -36,23 +36,39 @@ public class CURLHelper {
      * 提取单引号内容
      */
     final String QUOTATION_MARKS = "'(.*?)'";
+    /**
+     * -- request 请求方式正则
+     */
+    final String REQUEST_MARKS = "--request\\s+(\\w+)";
 
     public HttpRequestConfig getConfig() {
+        String requestType = null;
         String[] list = curlText.split("\n");
         for (String cmd : list) {
             String text = cmd.replaceAll("(^\\s+)|\\s+\\\\$", "");
+            if(text.startsWith("curl")){
+                this.config.setUrl(RegexHelper.findFirst(text, QUOTATION_MARKS, 1));
+            }
+            if(text.contains("--request")){
+                requestType = RegexHelper.findFirst(text, REQUEST_MARKS, 1);
+                this.config.setMethod(methodMap.get(requestType));
+            }
             if (text.matches("^(?i)curl\\s+'http(s)?://.*'")) {
                 this.config.setUrl(RegexHelper.findFirst(text, QUOTATION_MARKS, 1));
                 continue;
             }
             if (text.startsWith("-X")) {
                 String method = RegexHelper.findFirst(text, QUOTATION_MARKS, 1);
+                requestType = method;
                 this.config.setMethod(methodMap.get(method));
                 continue;
             }
 
-            if (text.startsWith("-H")) {
+            if (text.matches("-H.*|--header.*")) {
                 String head = RegexHelper.findFirst(text, QUOTATION_MARKS, 1);
+                if (!head.contains(":")) {
+                    continue;
+                }
                 String[] headKv = head.split(":");
                 String key = headKv[0];
                 String value = headKv[1].replaceAll("^\\s+", "");
@@ -76,7 +92,7 @@ public class CURLHelper {
                 }
                 continue;
             }
-            if (text.startsWith("--data-raw")) {
+            if (text.matches("--data-raw.*|--data.*")) {
                 String body = RegexHelper.findFirst(text, QUOTATION_MARKS, 1);
                 this.config.setRequestBody(body);
             }
@@ -86,6 +102,11 @@ public class CURLHelper {
                     body = body.replace("http://", "");
                     String[] array = body.split(":");
                     this.config.setProxy(new ProxyConfig(Proxy.Type.HTTP, array[0], Integer.parseInt(array[1]), null, null));
+                }
+            }
+            if(null == requestType){
+                if(null != this.config.getRequestBody()){
+                    this.config.setMethod(HttpRequestConfig.Method.POST);
                 }
             }
 

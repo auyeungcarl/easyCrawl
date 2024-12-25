@@ -10,6 +10,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.List;
 
+@Deprecated
 @Slf4j
 public class MyProxySelector extends ProxySelector {
     private ProxyConfig proxyConfig;

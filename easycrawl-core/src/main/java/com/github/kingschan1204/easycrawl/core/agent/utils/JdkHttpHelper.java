@@ -1,8 +1,10 @@
 package com.github.kingschan1204.easycrawl.core.agent.utils;
 
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
+import com.github.kingschan1204.easycrawl.helper.validation.Assert;
 
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -34,6 +36,7 @@ public class JdkHttpHelper {
         HttpClient.Builder builder = HttpClient.newBuilder();
         if (config.getProxy() != null) {
 //            builder.proxy(new MyProxySelector(config.getProxy()));
+            Assert.isTrue(!config.getProxy().getType().equals(Proxy.Type.SOCKS), "Jdk HttpClient 目前只支持http代理！");
             builder.proxy(ProxySelector.of(new InetSocketAddress(config.getProxy().getHost(), config.getProxy().getPort())));
         }
         if (config.getConnectTimeout() != null) {
@@ -41,9 +44,9 @@ public class JdkHttpHelper {
         }
         //允许重定向
 //        builder.followRedirects(HttpClient.Redirect.ALWAYS);
-        builder.followRedirects(HttpClient.Redirect.NORMAL);
+//        builder.followRedirects(HttpClient.Redirect.NORMAL);
 //        builder.version(HttpClient.Version.HTTP_2);
-        builder.version(HttpClient.Version.HTTP_1_1);
+//        builder.version(HttpClient.Version.HTTP_1_1);
         return builder.build();
     }
 
