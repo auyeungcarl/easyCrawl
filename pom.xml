@@ -26,7 +26,7 @@
         <jackson-core.version>2.17.1</jackson-core.version>
         <commons-io.version>2.11.0</commons-io.version>
         <poi.version>5.2.5</poi.version>
-        <junit-jupiter-engine.version>5.9.2</junit-jupiter-engine.version>
+        <junit.version>5.9.3</junit.version>
         <easyexcel.version>3.0.5</easyexcel.version>
     </properties>
 
@@ -87,8 +87,17 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit-jupiter-engine.version}</version>
-                <scope>test</scope>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
             <dependency>
