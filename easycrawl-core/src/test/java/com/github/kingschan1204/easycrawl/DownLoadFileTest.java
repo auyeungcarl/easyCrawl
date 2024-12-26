@@ -1,6 +1,6 @@
 package com.github.kingschan1204.easycrawl;
 
-import com.github.kingschan1204.easycrawl.task.EasyCrawl;
+import com.github.kingschan1204.easycrawl.task.ThinEasyCrawl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,11 +36,7 @@ public class DownLoadFileTest {
                   --data-raw '{"searchInput":"","pageNum":1,"pageSize":10,"sortField":null,"sortOrder":null}'
                 """;
 
-        File file = new EasyCrawl<File>()
-                .webAgent(curl)
-                .folder("C:\\temp\\")
-                .analyze(r -> r.getResult().getFile())
-                .execute();
+        File file = new ThinEasyCrawl(curl).folder("C:\\temp\\").execute().getFile();
         log.info("文件名：{} 文件大小：{} kb", file.getName(), file.length() / 1024);
     }
 }

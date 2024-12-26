@@ -22,9 +22,9 @@ import java.util.function.Function;
 @Slf4j
 public class EasyCrawl<R> {
 
-    private WebAgent webAgent;
-    private Function<WebAgent, R> parserFunction;
-    private Map<String, Object> argsMap;
+    protected WebAgent webAgent;
+    protected Function<WebAgent, R> parserFunction;
+    protected Map<String, Object> argsMap;
 
     public EasyCrawl<R> webAgent(WebAgent webAgent) {
         this.webAgent = webAgent;
