@@ -72,8 +72,23 @@ public class EasyCrawl<R> {
         return this;
     }
 
+    public EasyCrawl<R> heads(Map<String,String> heads) {
+        this.webAgent.head(heads);
+        return this;
+    }
+
     public EasyCrawl<R> head(String key, String value) {
         this.webAgent.head(key, value);
+        return this;
+    }
+
+    public EasyCrawl<R> method(HttpRequestConfig.Method method) {
+        this.webAgent.method(method);
+        return this;
+    }
+
+    public EasyCrawl<R> body(String body) {
+        this.webAgent.body(body);
         return this;
     }
 

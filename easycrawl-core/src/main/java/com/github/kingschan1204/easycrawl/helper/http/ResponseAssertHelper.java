@@ -42,7 +42,7 @@ public class ResponseAssertHelper {
     }
 
     public void contentType() {
-        String type = result.contentType();
+        String type = String.valueOf(result.contentType());
         String content = "不知道是个啥！";
         if (type.matches("text/html.*")) {
             content = "html";

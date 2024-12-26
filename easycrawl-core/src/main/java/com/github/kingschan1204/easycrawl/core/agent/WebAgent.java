@@ -46,8 +46,9 @@ public interface WebAgent {
     static WebAgent agent(HttpRequestConfig config, Engine engine) {
         WebAgent agent = null;
         switch (engine) {
-            case null, JDK -> agent = new JdkHttpAgent();
+            case null -> agent = new JsoupHttp1Agent();
             case JSOUP -> agent = new JsoupHttp1Agent();
+            case JDK -> agent = new JdkHttpAgent();
             case HTTPCLIENT5 -> agent = new ApacheHttpClientAgent();
         }
         GenericHttp1AgentProxy proxy = new GenericHttp1AgentProxy(
@@ -82,6 +83,7 @@ public interface WebAgent {
 
     /**
      * 超时时间单位毫秒
+     *
      * @param timeOut 超时时间(毫秒)
      * @return
      */

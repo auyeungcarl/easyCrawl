@@ -17,7 +17,7 @@ public class TranscodingInterceptorImpl implements AfterInterceptor {
     public HttpResult interceptor(Map<String, Object> data, WebAgent webAgent) {
         HttpResult result = webAgent.getResult();
         String charset = result.charset();
-        String contentType = result.contentType();
+        String contentType = String.valueOf(result.contentType());
         //	<meta http-equiv="Content-Type" content="text/html; charset=gbk"/>
         // <meta charSet="utf-8"/>
         if ((null == charset || charset.isEmpty()) && contentType.matches("text/html.*")) {
