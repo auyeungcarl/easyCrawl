@@ -53,7 +53,7 @@ public class TaskScheduledThreadPool extends ScheduledThreadPoolExecutor {
 
     public TaskScheduledThreadPool(Supplier<Boolean> condition) {
 //        Executors.defaultThreadFactory()
-        super(10, new TaskThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+        super(10, new TaskThreadFactory(""), new ThreadPoolExecutor.AbortPolicy());
         this.errorNumber = new AtomicInteger(0);
         this.maxErrorNumber = 3;
         this.condition = condition;

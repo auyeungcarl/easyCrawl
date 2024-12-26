@@ -37,6 +37,6 @@ public class DownLoadFileTest {
                 """;
 
         File file = new ThinEasyCrawl(curl).folder("C:\\temp\\").execute().getFile();
-        log.info("文件名：{} 文件大小：{} kb", file.getName(), file.length() / 1024);
+        log.info("fileName：{} fileSize：{} kb", file.getName(), file.length() / 1024);
     }
 }
