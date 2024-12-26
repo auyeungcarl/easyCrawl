@@ -2,9 +2,12 @@ package com.github.kingschan1204.easycrawl.task;
 
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ThinEasyCrawl extends EasyCrawl<HttpResult> {
     private String curl;
+
     public ThinEasyCrawl(String curl) {
         this(curl, null);
     }
@@ -19,15 +22,17 @@ public class ThinEasyCrawl extends EasyCrawl<HttpResult> {
         this.parserFunction = (webAgent) -> webAgent.getResult();
     }
 
-    String autoCurl(String text){
+    String autoCurl(String text) {
         String cmd = String.valueOf(text).trim();
-        if(cmd.startsWith("curl")){
+        if (cmd.startsWith("curl")) {
             return text;
         }
-        return String.format("curl '%s'",cmd);
+        return String.format("curl '%s'", cmd);
     }
 
+    @Override
     public HttpResult execute() {
-        return super.execute();
+        HttpResult result = webAgent.execute(this.argsMap).getResult();
+        return result;
     }
 }

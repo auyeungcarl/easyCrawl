@@ -51,6 +51,11 @@ public class EasyCrawl<R> {
         return this;
     }
 
+    public EasyCrawl<R> timeOut(Integer timeOut) {
+        this.webAgent.timeOut(timeOut);
+        return this;
+    }
+
     public EasyCrawl<R> args(String key, Object value) {
         if (null == argsMap) {
             argsMap = new HashMap<>();
@@ -72,7 +77,7 @@ public class EasyCrawl<R> {
         return this;
     }
 
-    public EasyCrawl<R> heads(Map<String,String> heads) {
+    public EasyCrawl<R> heads(Map<String, String> heads) {
         this.webAgent.head(heads);
         return this;
     }
@@ -100,7 +105,7 @@ public class EasyCrawl<R> {
     public R execute() {
         Assert.notNull(webAgent, "agent对象不能为空！");
         Assert.notNull(parserFunction, "解析函数不能为空！");
-        R result;
+        R result = null;
         CompletableFuture<R> cf = CompletableFuture.supplyAsync(() -> {
             try {
                 return webAgent.execute(this.argsMap);
@@ -112,6 +117,7 @@ public class EasyCrawl<R> {
         try {
             result = cf.get();
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
         return result;
