@@ -3,10 +3,13 @@ package com.github.kingschan1204.easycrawl.core.agent.utils;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.result.impl.ApacheHttpResultImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.entity.DecompressingEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -17,10 +20,13 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.io.CloseMode;
+import org.apache.hc.core5.util.Timeout;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ApacheHttpClientHelper {
     final HttpRequestConfig config;
 
@@ -35,9 +41,13 @@ public class ApacheHttpClientHelper {
             // 创建代理配置
             proxy = new HttpHost(config.getProxy().getHost(), config.getProxy().getPort());
         }
-        CloseableHttpClient httpClient = HttpClients.custom().setProxy(proxy).build();
-
-
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(Timeout.of(config.getConnectTimeout(), TimeUnit.MILLISECONDS))
+                .setConnectTimeout(Timeout.of(config.getConnectTimeout(), TimeUnit.MILLISECONDS))
+                .setContentCompressionEnabled(true)
+                .setProxy(proxy)
+                .build();
+        CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
         HttpUriRequestBase request = null;
         switch (config.getMethod()) {
             case POST -> request = new HttpPost(config.getUrl());
@@ -47,7 +57,7 @@ public class ApacheHttpClientHelper {
                 throw new RuntimeException("暂不支持该请求方式:" + config.getMethod());
             }
         }
-
+        request.setHeader("User-Agent", config.getUseAgent());
         if (null != config.getHead()) {
             // 将Map中的头信息设置到请求中
             for (Map.Entry<String, String> entry : config.getHead().entrySet()) {
@@ -78,7 +88,11 @@ public class ApacheHttpClientHelper {
             request.setEntity(entity);
         }
         try (CloseableHttpResponse response = httpClient.execute((ClassicHttpRequest) request)) {
+//            DecompressingEntity decompressingEntity = (DecompressingEntity) response.getEntity();
+            // 开启压缩： org.apache.hc.client5.http.entity.DecompressingEntity
+            // 不开启压缩： org.apache.hc.client5.http.impl.classic.ResponseEntityProxy
             byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+            log.info("请求结果:{} byte", bytes.length);
 //            String contentEncoding = response.getHeader("content-encoding").getValue();
             return new ApacheHttpResultImpl(System.currentTimeMillis() - start, response, config, bytes);
         } catch (Exception e) {

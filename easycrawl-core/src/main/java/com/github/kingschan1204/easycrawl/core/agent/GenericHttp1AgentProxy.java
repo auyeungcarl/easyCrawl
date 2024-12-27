@@ -4,10 +4,7 @@ import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.AfterInterceptor;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
-import com.github.kingschan1204.easycrawl.helper.json.JsonHelper;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

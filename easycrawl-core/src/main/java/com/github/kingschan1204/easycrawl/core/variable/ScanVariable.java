@@ -2,7 +2,6 @@ package com.github.kingschan1204.easycrawl.core.variable;
 
 import com.github.kingschan1204.easycrawl.core.variable.impl.TimeStampExpression;
 import com.github.kingschan1204.easycrawl.helper.regex.RegexHelper;
-import com.github.kingschan1204.easycrawl.helper.collections.MapUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,13 +53,5 @@ public class ScanVariable {
         return text;
     }
 
-    public static void main(String[] args) {
-        String text = "https://xueqiu.com/service/screener/screen?category=CN&exchange=sh_sz&areacode=&indcode=&order_by=symbol&order=desc&page=${page}&size=${pageSize}&only_count=0&current=&pct=&mc=&volume=&_=${timestamp}";
-        System.out.println(ScanVariable.parser(text,
-                new MapUtil<String, Object>()
-                        .put("page", "1")
-                        .put("pageSize", "300")
-                        .getMap()));
-    }
 
 }

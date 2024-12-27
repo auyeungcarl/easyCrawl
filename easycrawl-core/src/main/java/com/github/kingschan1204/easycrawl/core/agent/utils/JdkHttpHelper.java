@@ -64,6 +64,7 @@ public class JdkHttpHelper {
             }
 
         }
+        builder.header("User-Agent", config.getUseAgent());
 //        if (config.getRequestBody() != null) {
 //            builder.POST(HttpRequest.BodyPublishers.ofString(config.getRequestBody()));
 //        }
