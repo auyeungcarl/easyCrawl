@@ -23,9 +23,9 @@ public class HttpRequestConfig {
     /**
      * 超时时间  毫秒
      */
-    public Integer connectTimeout = 10000;
+    public Integer connectTimeout;
 
-    public String useAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+    public String useAgent;
 
     public String requestBody;
 

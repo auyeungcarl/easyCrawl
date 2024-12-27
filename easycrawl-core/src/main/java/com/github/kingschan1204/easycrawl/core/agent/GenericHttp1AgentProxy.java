@@ -1,5 +1,6 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
+import com.github.kingschan1204.easycrawl.app.Application;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.AfterInterceptor;
@@ -137,6 +138,13 @@ public class GenericHttp1AgentProxy implements WebAgent {
 
     @Override
     public WebAgent execute(Map<String, Object> data) {
+        //default set
+        if(null == this.webAgent.getConfig().getUseAgent()){
+            this.webAgent.useAgent(Application.getInstance().getDefaultConfig().getUseAgent());
+        }
+        if(null == this.webAgent.getConfig().getConnectTimeout()){
+            this.webAgent.timeOut(Application.getInstance().getDefaultConfig().getConnectTimeout());
+        }
         WebAgent wa = this.webAgent.execute(data);
         for (AfterInterceptor interceport : interceptors) {
             result = interceport.interceptor(data, wa);

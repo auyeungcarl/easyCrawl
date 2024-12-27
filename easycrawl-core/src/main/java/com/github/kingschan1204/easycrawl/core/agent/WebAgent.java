@@ -1,6 +1,7 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
 
+import com.github.kingschan1204.easycrawl.app.Application;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.impl.ApacheHttpClientAgent;
@@ -10,7 +11,9 @@ import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.StatusPrin
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.TranscodingInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author kings.chan
@@ -20,10 +23,36 @@ import java.util.Map;
 public interface WebAgent {
 
     enum Engine {
-        JDK,
-        JSOUP,
-        HTTPCLIENT5
+        JDK("jdk"),
+        JSOUP("jsoup"),
+        HTTPCLIENT5("httpclient5");
 
+        private String value;
+
+        Engine(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public static Engine fromValue(String value) {
+            return Arrays.stream(Engine.values())
+                    .filter(engine -> engine.getValue().equals(value))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        public static Optional<Engine> fromValueAsOptional(String value) {
+            return Arrays.stream(Engine.values())
+                    .filter(engine -> engine.getValue().equals(value))
+                    .findFirst();
+        }
     }
 
     /**
@@ -45,8 +74,10 @@ public interface WebAgent {
 
     static WebAgent agent(HttpRequestConfig config, Engine engine) {
         WebAgent agent = null;
+        if (engine == null) {
+            engine = Engine.fromValue(Application.getInstance().getDefaultConfig().getHttpEngine());
+        }
         switch (engine) {
-            case null -> agent = new JsoupHttp1Agent();
             case JSOUP -> agent = new JsoupHttp1Agent();
             case JDK -> agent = new JdkHttpAgent();
             case HTTPCLIENT5 -> agent = new ApacheHttpClientAgent();

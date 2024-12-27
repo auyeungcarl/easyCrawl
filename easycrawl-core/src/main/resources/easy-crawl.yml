@@ -1,0 +1,11 @@
+defaultConfig:
+  # 使用哪种工具包： jsoup jdk httpclient5
+  httpEngine: jsoup
+  # use-agent
+  useAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
+  # 超时时间(毫秒)
+  connectTimeout: 10000
+  # 默认文件下载目录
+  fileFolder: C://temp//
+  # 是否开启http请求压缩
+  httpCompress: true

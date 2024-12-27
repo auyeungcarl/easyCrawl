@@ -1,5 +1,6 @@
 package com.github.kingschan1204.easycrawl.core.agent.utils;
 
+import com.github.kingschan1204.easycrawl.app.Application;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.helper.http.ResponseHeadHelper;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Optional;
+
 @Slf4j
 public class HttpFileHelper {
     public static File downloadFile(HttpResult result, HttpRequestConfig config) {
@@ -26,7 +29,8 @@ public class HttpFileHelper {
             //文件名优先使用指定的文件名，如果没有指定 则获取自动识别的文件名
             config.setFileName(String.valueOf(config.getFileName()).matches(RegexHelper.REGEX_FILE_NAME) ? config.getFileName() : defaultFileName);
             Assert.notNull(config.getFileName(), "文件名不能为空！");
-            String path = String.format("%s%s", config.getFolder(), config.getFileName());
+            String folder = Optional.ofNullable(config.getFolder()).orElse(Application.getInstance().getDefaultConfig().getFileFolder());
+            String path = String.format("%s%s", folder, config.getFileName());
             // output here
             log.info("输出文件：{}", path);
             FileOutputStream out = null;
