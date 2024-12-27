@@ -4,29 +4,26 @@ import com.github.kingschan1204.easycrawl.app.config.AppDefaultConfig;
 import com.github.kingschan1204.easycrawl.app.config.ApplicationConfig;
 
 public class Application {
-    private static Application instance;
-    private ApplicationConfig config;
+    private ApplicationConfig config = YamlParser.parseYaml();
 
     private Application() {
-        loadConfig();
     }
 
-    public static synchronized Application getInstance() {
-        if (instance == null) {
-            instance = new Application();
-        }
-        return instance;
+    // Holer singleton
+    private static class Holder {
+        private static Application instance = new Application();
     }
 
-    private void loadConfig() {
-        config = YamlParser.parseYaml();
+    public static Application getInstance() {
+        return Holder.instance;
     }
+
 
     public ApplicationConfig getConfig() {
         return config;
     }
 
-    public AppDefaultConfig getDefaultConfig(){
+    public AppDefaultConfig getDefaultConfig() {
         return config.getDefaultConfig();
     }
 }
