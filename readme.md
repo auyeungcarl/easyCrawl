@@ -15,6 +15,24 @@
 | Jdk HttpClient       | &#x2705;   |               | &#x2705;      |
 | Apache HttpClient5   | &#x2705;   |               | &#x2705;      |
 
+## Configuration Files
+
+> easy-crawl.yml
+
+```yaml
+defaultConfig:
+  # HTTP request engines: jsoup jdk httpclient5
+  httpEngine: jsoup
+  # http use-agent
+  useAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
+  # HTTP request timeout (milliseconds)
+  connectTimeout: 10000
+  # Default file download directory
+  fileFolder: C://temp//
+  # Whether to enable http request compression
+  httpCompress: true
+```
+
 ### file download
 
 ```
