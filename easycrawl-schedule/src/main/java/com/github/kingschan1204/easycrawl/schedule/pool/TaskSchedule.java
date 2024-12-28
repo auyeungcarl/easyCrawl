@@ -32,6 +32,8 @@ public interface TaskSchedule {
 
   void resume();
 
+  boolean awaitTermination(long time, TimeUnit timeUnit);
+
   ScheduledFuture schedule(Runnable command, long delay, TimeUnit unit);
 
   ScheduledFuture scheduleWithFixedDelay(

@@ -1,7 +1,6 @@
 package com.github.kingschan1204.easycrawl.schedule.pool.impl;
 
 import com.github.kingschan1204.easycrawl.helper.datetime.DateHelper;
-import com.github.kingschan1204.easycrawl.schedule.EasyCrawlContent;
 import com.github.kingschan1204.easycrawl.schedule.pool.PausableScheduledThreadPool;
 import com.github.kingschan1204.easycrawl.schedule.pool.TaskSchedule;
 import com.github.kingschan1204.easycrawl.schedule.queue.RedisQueue;
@@ -27,6 +26,8 @@ public class EasyCrawlScheduledPool implements TaskSchedule {
   final LocalDateTime startTime;
 
   private PausableScheduledThreadPool threadPool;
+
+  boolean isShutdown = false;
 
   public EasyCrawlScheduledPool(String taskName, int corePoolSize) {
     this.taskName = taskName;
@@ -86,6 +87,16 @@ public class EasyCrawlScheduledPool implements TaskSchedule {
   }
 
   @Override
+  public boolean awaitTermination(long time, TimeUnit timeUnit) {
+    try {
+      return threadPool.awaitTermination(time, timeUnit);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+
+  @Override
   public ScheduledFuture schedule(Runnable command, long delay, TimeUnit unit) {
     return threadPool.schedule(command, delay, unit);
   }
@@ -125,22 +136,31 @@ public class EasyCrawlScheduledPool implements TaskSchedule {
           if (queue.size() > 0) {
             command.run();
           } else {
-            threadPool.shutdown();
-            long runTime =
-                DateHelper.getMillisDiff(this.startTime, LocalDateTime.now()).toSeconds();
-            log.info(
-                "任务：{} redis list队列: {} 执行完毕，关闭任务！执行总时长：{}秒", taskName, queue.redisKey(), runTime);
-            try {
-              if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
-                // 如果超时未完成，强制关闭
-                log.warn("任务：{} 关闭释放资源超时，强制关闭！", taskName);
-                threadPool.shutdownNow();
-              } else {
-                log.info("任务：{} 释放资源成功！", taskName);
-                EasyCrawlContent.getInstance().remove(taskName);
+            synchronized (command) {
+              if (!isShutdown) {
+                try {
+                  threadPool.shutdown();
+                  long runTime =
+                      DateHelper.getMillisDiff(this.startTime, LocalDateTime.now()).toSeconds();
+                  log.info(
+                      "任务：{} redis list队列: {} 执行完毕，关闭任务！执行总时长：{}秒",
+                      taskName,
+                      queue.redisKey(),
+                      runTime);
+                  /*if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
+                    // 如果超时未完成，强制关闭
+                    log.warn("任务：{} 关闭释放资源超时，强制关闭！", taskName);
+                    threadPool.shutdownNow();
+                  } else {
+                    log.info("任务：{} 释放资源成功！", taskName);
+                    EasyCrawlContent.getInstance().remove(taskName);
+                  }*/
+                  isShutdown = true;
+                  //                  EasyCrawlContent.getInstance().remove(taskName);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                }
               }
-            } catch (Exception e) {
-              e.printStackTrace();
             }
           }
         },
