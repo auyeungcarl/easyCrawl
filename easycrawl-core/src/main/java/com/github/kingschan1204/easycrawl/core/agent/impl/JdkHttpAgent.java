@@ -1,5 +1,6 @@
 package com.github.kingschan1204.easycrawl.core.agent.impl;
 
+import com.github.kingschan1204.easycrawl.app.Application;
 import com.github.kingschan1204.easycrawl.core.agent.WebAgent;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
@@ -148,7 +149,9 @@ public class JdkHttpAgent implements WebAgent {
         String referer = null != this.config.getReferer() ? ScanVariable.parser(this.config.getReferer(), data).trim() : null;
         this.config.setUrl(httpUrl);
         this.config.setReferer(referer);
-        this.config.addHead("Accept-Encoding", "gzip, deflate");
+        if(Application.getInstance().getDefaultConfig().getHttpCompress()){
+            this.config.addHead("Accept-Encoding", "gzip, deflate");
+        }
         log.debug("cofig:{}", config);
         HttpResponse response = new JdkHttpHelper(config).request();
         this.result = new JdkHttpResultImpl(response, start, this.config);

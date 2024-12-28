@@ -1,15 +1,22 @@
-
-> This project is a crawler toolkit implemented based on Java. The original intention is to crawl Internet data simply and efficiently.
+> This project is a crawler toolkit implemented based on Java. The original intention is to crawl Internet data simply
+> and efficiently.
 
 ## Implemented Functions
+
 - HTTP/HTTPS GET, POST, PUT
 - File Download
 - HTTP and SOCKS5 Proxies
 - Convert cURL Commands to HTTP Requests
 - Supports three types of HTTP request engines (`jsoup`, `jdk HttpClient`, `Apache HttpClient5`)
 
+| HTTP request engines | http Proxy | Socket5 Proxy | http compress |
+|----------------------|------------|---------------|---------------|
+| Jsoup                | &#x2705;   | &#x2705;      |               |
+| Jdk HttpClient       | &#x2705;   |               | &#x2705;      |
+| Apache HttpClient5   | &#x2705;   |               | &#x2705;      |
 
 ### file download
+
 ```
  String curl = """
                 curl 'https://www.csindex.com.cn/csindex-home/exportExcel/security-industry-search-excel/CH' \\
@@ -37,6 +44,7 @@
 ```
 
 ### HTTP and SOCKS5 Proxies
+
 ```
         String apiUrl = "https://myip.ipip.net/json";
         
@@ -52,6 +60,7 @@
 ```
 
 ### get response cookies
+
 ```
         String curl = "https://www.xueqiu.com/about";
         Map<String, String> cookies = new ThinEasyCrawl(curl).execute().cookies();

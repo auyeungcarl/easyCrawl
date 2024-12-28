@@ -1,5 +1,6 @@
 package com.github.kingschan1204.easycrawl.core.agent.utils;
 
+import com.github.kingschan1204.easycrawl.app.Application;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.agent.result.impl.ApacheHttpResultImpl;
@@ -41,10 +42,11 @@ public class ApacheHttpClientHelper {
             // 创建代理配置
             proxy = new HttpHost(config.getProxy().getHost(), config.getProxy().getPort());
         }
+        boolean compress = Application.getInstance().getDefaultConfig().getHttpCompress();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectionRequestTimeout(Timeout.of(config.getConnectTimeout(), TimeUnit.MILLISECONDS))
                 .setConnectTimeout(Timeout.of(config.getConnectTimeout(), TimeUnit.MILLISECONDS))
-                .setContentCompressionEnabled(true)
+                .setContentCompressionEnabled(compress)
                 .setProxy(proxy)
                 .build();
         CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
@@ -92,7 +94,6 @@ public class ApacheHttpClientHelper {
             // 开启压缩： org.apache.hc.client5.http.entity.DecompressingEntity
             // 不开启压缩： org.apache.hc.client5.http.impl.classic.ResponseEntityProxy
             byte[] bytes = EntityUtils.toByteArray(response.getEntity());
-            log.info("请求结果:{} byte", bytes.length);
 //            String contentEncoding = response.getHeader("content-encoding").getValue();
             return new ApacheHttpResultImpl(System.currentTimeMillis() - start, response, config, bytes);
         } catch (Exception e) {

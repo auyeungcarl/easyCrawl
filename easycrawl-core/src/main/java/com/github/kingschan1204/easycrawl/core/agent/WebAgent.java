@@ -1,6 +1,5 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
-
 import com.github.kingschan1204.easycrawl.app.Application;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
@@ -10,127 +9,86 @@ import com.github.kingschan1204.easycrawl.core.agent.impl.JsoupHttp1Agent;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.StatusPrintInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.TranscodingInterceptorImpl;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
-
-import java.util.Arrays;
+import com.github.kingschan1204.easycrawl.core.enums.HttpRequestEngine;
 import java.util.Map;
-import java.util.Optional;
 
 /**
- * @author kings.chan
- * 2023-04-21
- **/
-
+ * @author kings.chan 2023-04-21
+ */
 public interface WebAgent {
 
-    enum Engine {
-        JDK("jdk"),
-        JSOUP("jsoup"),
-        HTTPCLIENT5("httpclient5");
+  /**
+   * 默认agent
+   *
+   * @return GenericHttp1Agent
+   */
+  static WebAgent agent() {
+    return agent(null, null);
+  }
 
-        private String value;
+  static WebAgent agent(HttpRequestEngine engine) {
+    return agent(null, engine);
+  }
 
-        Engine(String value) {
-            this.value = value;
-        }
+  static WebAgent agent(HttpRequestConfig config) {
+    return agent(config, null);
+  }
 
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public static Engine fromValue(String value) {
-            return Arrays.stream(Engine.values())
-                    .filter(engine -> engine.getValue().equals(value))
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        public static Optional<Engine> fromValueAsOptional(String value) {
-            return Arrays.stream(Engine.values())
-                    .filter(engine -> engine.getValue().equals(value))
-                    .findFirst();
-        }
+  static WebAgent agent(HttpRequestConfig config, HttpRequestEngine engine) {
+    WebAgent agent = null;
+    if (engine == null) {
+      engine =
+          HttpRequestEngine.fromValue(Application.getInstance().getDefaultConfig().getHttpEngine());
     }
-
-    /**
-     * 默认agent
-     *
-     * @return GenericHttp1Agent
-     */
-    static WebAgent agent() {
-        return agent(null, null);
+    switch (engine) {
+      case JSOUP -> agent = new JsoupHttp1Agent();
+      case JDK -> agent = new JdkHttpAgent();
+      case HTTPCLIENT5 -> agent = new ApacheHttpClientAgent();
     }
+    GenericHttp1AgentProxy proxy =
+        new GenericHttp1AgentProxy(
+            agent, new StatusPrintInterceptorImpl(), new TranscodingInterceptorImpl());
+    proxy.config(config);
+    return proxy;
+  }
 
-    static WebAgent agent(Engine engine) {
-        return agent(null, engine);
-    }
+  HttpRequestConfig getConfig();
 
-    static WebAgent agent(HttpRequestConfig config) {
-        return agent(config, null);
-    }
+  WebAgent config(HttpRequestConfig config);
 
-    static WebAgent agent(HttpRequestConfig config, Engine engine) {
-        WebAgent agent = null;
-        if (engine == null) {
-            engine = Engine.fromValue(Application.getInstance().getDefaultConfig().getHttpEngine());
-        }
-        switch (engine) {
-            case JSOUP -> agent = new JsoupHttp1Agent();
-            case JDK -> agent = new JdkHttpAgent();
-            case HTTPCLIENT5 -> agent = new ApacheHttpClientAgent();
-        }
-        GenericHttp1AgentProxy proxy = new GenericHttp1AgentProxy(
-                agent,
-                new StatusPrintInterceptorImpl(),
-                new TranscodingInterceptorImpl()
-        );
-        proxy.config(config);
-        return proxy;
-    }
+  WebAgent url(String url);
 
+  WebAgent referer(String referer);
 
-    HttpRequestConfig getConfig();
+  WebAgent method(HttpRequestConfig.Method method);
 
-    WebAgent config(HttpRequestConfig config);
+  WebAgent head(Map<String, String> head);
 
-    WebAgent url(String url);
+  WebAgent head(String key, String value);
 
-    WebAgent referer(String referer);
+  WebAgent useAgent(String useAgent);
 
-    WebAgent method(HttpRequestConfig.Method method);
+  WebAgent cookie(Map<String, String> cookie);
 
-    WebAgent head(Map<String, String> head);
+  WebAgent cookie(String key, String value);
 
-    WebAgent head(String key, String value);
+  /**
+   * 超时时间单位毫秒
+   *
+   * @param timeOut 超时时间(毫秒)
+   * @return
+   */
+  WebAgent timeOut(Integer timeOut);
 
-    WebAgent useAgent(String useAgent);
+  WebAgent proxy(ProxyConfig config);
 
-    WebAgent cookie(Map<String, String> cookie);
+  WebAgent body(String body);
 
-    WebAgent cookie(String key, String value);
+  WebAgent folder(String folder);
 
-    /**
-     * 超时时间单位毫秒
-     *
-     * @param timeOut 超时时间(毫秒)
-     * @return
-     */
-    WebAgent timeOut(Integer timeOut);
+  WebAgent fileName(String fileName);
 
-    WebAgent proxy(ProxyConfig config);
+  WebAgent execute(Map<String, Object> data);
 
-    WebAgent body(String body);
-
-    WebAgent folder(String folder);
-
-    WebAgent fileName(String fileName);
-
-    WebAgent execute(Map<String, Object> data);
-
-    HttpResult getResult();
-
-
+  HttpResult getResult();
 }
