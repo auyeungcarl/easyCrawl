@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>easycrawl-core</module>
+        <module>easycrawl-schedule</module>
     </modules>
     <properties>
         <java.version>17</java.version>
@@ -28,6 +29,11 @@
         <poi.version>5.2.5</poi.version>
         <junit.version>5.9.3</junit.version>
         <easyexcel.version>3.0.5</easyexcel.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
+        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+        <freemarker.version>2.3.32</freemarker.version>
+        <httpclient5.version>5.1</httpclient5.version>
+        <jsonpath.version>2.9.0</jsonpath.version>
     </properties>
 
 
@@ -81,7 +87,7 @@
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.32</version>
+                <version>${freemarker.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
             <dependency>
@@ -129,11 +135,28 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>transmittable-thread-local</artifactId>
-                <version>2.14.5</version>
+                <version>${transmittable-thread-local.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${jsonpath.version}</version>
+            </dependency>
         </dependencies>
+        
     </dependencyManagement>
 
 
@@ -162,4 +185,15 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <!-- 阿里云效自建maven仓库   -->
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2380205-release-OnkMKI/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2380205-snapshot-VjjHP6/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

@@ -36,7 +36,7 @@ public class DownLoadFileTest {
                   --data-raw '{"searchInput":"","pageNum":1,"pageSize":10,"sortField":null,"sortOrder":null}'
                 """;
 
-        File file = new ThinEasyCrawl(curl).folder("C:\\temp\\").execute().getFile();
+        File file = new ThinEasyCrawl(curl).execute().getFile();
         log.info("fileName：{} fileSize：{} kb", file.getName(), file.length() / 1024);
     }
 }
