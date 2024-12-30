@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -27,7 +28,9 @@ public class EasyCrawlScheduledPool implements TaskSchedule {
 
   private PausableScheduledThreadPool threadPool;
 
-  boolean isShutdown = false;
+  //  boolean isShutdown = false;
+
+  ReentrantLock lock = new ReentrantLock();
 
   public EasyCrawlScheduledPool(String taskName, int corePoolSize) {
     this.taskName = taskName;
@@ -136,31 +139,35 @@ public class EasyCrawlScheduledPool implements TaskSchedule {
           if (queue.size() > 0) {
             command.run();
           } else {
-            synchronized (command) {
-              if (!isShutdown) {
-                try {
-                  threadPool.shutdown();
-                  long runTime =
-                      DateHelper.getMillisDiff(this.startTime, LocalDateTime.now()).toSeconds();
-                  log.info(
-                      "任务：{} redis list队列: {} 执行完毕，关闭任务！执行总时长：{}秒",
-                      taskName,
-                      queue.redisKey(),
-                      runTime);
-                  /*if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
-                    // 如果超时未完成，强制关闭
-                    log.warn("任务：{} 关闭释放资源超时，强制关闭！", taskName);
-                    threadPool.shutdownNow();
-                  } else {
-                    log.info("任务：{} 释放资源成功！", taskName);
-                    EasyCrawlContent.getInstance().remove(taskName);
-                  }*/
-                  isShutdown = true;
-                  //                  EasyCrawlContent.getInstance().remove(taskName);
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
+            if (lock.tryLock()) {
+              //              if (!isShutdown) {
+              try {
+                threadPool.shutdown();
+                long runTime =
+                    DateHelper.getMillisDiff(this.startTime, LocalDateTime.now()).toSeconds();
+                log.info(
+                    "任务：{} redis list队列: {} 执行完毕，关闭任务！执行总时长：{}秒",
+                    taskName,
+                    queue.redisKey(),
+                    runTime);
+                /* if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
+                  // 如果超时未完成，强制关闭
+                  log.warn("任务：{} 关闭释放资源超时，强制关闭！", taskName);
+                  threadPool.shutdownNow();
+                } else {
+                  log.info("任务：{} 释放资源成功！", taskName);
+                  EasyCrawlContent.getInstance().remove(taskName);
+                }*/
+                //                isShutdown = true;
+                //                  EasyCrawlContent.getInstance().remove(taskName);
+              } catch (Exception e) {
+                e.printStackTrace();
+              } finally {
+                lock.unlock();
               }
+              //              }
+            } else {
+              log.info("没有获取到锁...");
             }
           }
         },

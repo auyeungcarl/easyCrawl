@@ -66,7 +66,7 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <scope>provided</scope>
+                <!--                <scope>provided</scope>-->
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
             <dependency>
@@ -79,9 +79,13 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
-                <scope>test</scope>
+                <!--                <scope>test</scope>-->
             </dependency>
-
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
 
             <!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
             <dependency>
@@ -156,7 +160,7 @@
                 <version>${jsonpath.version}</version>
             </dependency>
         </dependencies>
-        
+
     </dependencyManagement>
 
 

@@ -62,8 +62,8 @@ public class EasyCrawlContent {
     if (!threadContent.get(taskName).isTerminated()) {
       throw new RuntimeException("任务未执行完毕，无法删除！");
     }
-    threadContent.remove(taskName);
     log.info("任务：{} 执行完成,已从容器中删除！", taskName);
+    threadContent.remove(taskName);
   }
 
   public void pauseAll() {
