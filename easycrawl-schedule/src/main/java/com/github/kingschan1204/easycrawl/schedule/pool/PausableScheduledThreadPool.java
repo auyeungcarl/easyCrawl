@@ -5,11 +5,14 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author kingschan 2024-12-28
  */
+@Slf4j
 public class PausableScheduledThreadPool extends ScheduledThreadPoolExecutor {
+  private final String taskName;
   private boolean isPaused;
   private final Lock pauseLock = new ReentrantLock();
   private final Condition unpaused = pauseLock.newCondition();
@@ -25,6 +28,7 @@ public class PausableScheduledThreadPool extends ScheduledThreadPoolExecutor {
     // 取消任务时从队列中移除任务 默认为false
     setRemoveOnCancelPolicy(true);
     setThreadFactory(new TaskThreadFactory(taskName));
+    this.taskName = taskName;
   }
 
   @Override
@@ -43,7 +47,7 @@ public class PausableScheduledThreadPool extends ScheduledThreadPoolExecutor {
   }
 
   public void pause() {
-    System.out.println("---------暂停任务---------");
+    log.warn("---------暂停任务 {}---------", taskName);
     pauseLock.lock();
     try {
       isPaused = true;
@@ -53,7 +57,7 @@ public class PausableScheduledThreadPool extends ScheduledThreadPoolExecutor {
   }
 
   public void resume() {
-    System.out.println("---------恢复任务---------");
+    log.warn("---------恢复任务 {}---------", taskName);
     pauseLock.lock();
     try {
       isPaused = false;
@@ -63,30 +67,9 @@ public class PausableScheduledThreadPool extends ScheduledThreadPoolExecutor {
     }
   }
 
-  public static void main(String[] args) throws InterruptedException {
-    PausableScheduledThreadPool executor = new PausableScheduledThreadPool("", 2);
-
-    Runnable task = () -> System.out.println("Executing task at " + System.currentTimeMillis());
-
-    executor.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
-    int i = 0;
-    do {
-      TimeUnit.SECONDS.sleep(5);
-      executor.pause();
-
-      TimeUnit.SECONDS.sleep(5);
-      executor.resume();
-      i++;
-      System.out.println("loop :" + i);
-    } while (i <= 2);
-    executor.shutdown();
-    // 等待所有任务完成或超时
-    if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
-      // 如果超时未完成，强制关闭
-      System.out.println("任务执行超时，强制关闭");
-      executor.shutdownNow();
-    } else {
-      System.out.println("任务执行完成");
-    }
+  @Override
+  public void shutdown() {
+    super.shutdown();
+    log.info("任务：{} 关闭释放资源！", taskName);
   }
 }

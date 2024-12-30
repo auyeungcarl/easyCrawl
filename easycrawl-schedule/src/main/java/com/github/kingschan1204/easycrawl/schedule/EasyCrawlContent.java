@@ -1,8 +1,10 @@
 package com.github.kingschan1204.easycrawl.schedule;
 
+import com.github.kingschan1204.easycrawl.helper.datetime.DateHelper;
 import com.github.kingschan1204.easycrawl.schedule.pool.TaskSchedule;
 import com.github.kingschan1204.easycrawl.schedule.pool.impl.EasyCrawlScheduledPool;
 import com.github.kingschan1204.easycrawl.schedule.queue.RedisQueue;
+import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -30,22 +32,76 @@ public class EasyCrawlContent {
       RedisQueue queue,
       Runnable command,
       int runQuantity,
+      LocalDateTime time,
+      long delay) {
+    fetureTime(time);
+    validateTaskName(taskName);
+    long delaySeconds = DateHelper.getMillisDiff(LocalDateTime.now(), time).toSeconds();
+    EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, runQuantity);
+    for (int i = 0; i < runQuantity; i++) {
+      pool.scheduleByRedisQueue(queue, command, delaySeconds, delay, TimeUnit.SECONDS);
+    }
+    threadContent.put(taskName, pool);
+  }
+
+  /**
+   * 根据redis队列执行任务，完成后自动关闭线程池
+   *
+   * @param taskName 任务名称
+   * @param queue redis队列
+   * @param command 任务
+   * @param runQuantity 并发线程数量
+   * @param initialDelay 任务第一次执行前的延迟时间
+   * @param delay 每次执行任务之间的延迟时间，从上一次任务结束到下一次任务开始的时间间隔
+   * @param unit 时间单位
+   */
+  public void scheduleByRedisQueue(
+      String taskName,
+      RedisQueue queue,
+      Runnable command,
+      int runQuantity,
       long initialDelay,
       long delay,
       TimeUnit unit) {
+    validateTaskName(taskName);
+    EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, runQuantity);
+    for (int i = 0; i < runQuantity; i++) {
+      pool.scheduleByRedisQueue(queue, command, initialDelay, delay, unit);
+    }
+    threadContent.put(taskName, pool);
+  }
+
+  public void scheduling(String taskName, Runnable command, LocalDateTime time) {
+    fetureTime(time);
+    validateTaskName(taskName);
+    EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, 1);
+    long delay = DateHelper.getMillisDiff(LocalDateTime.now(), time).toSeconds();
+    pool.schedule(command, delay, TimeUnit.SECONDS);
+    pool.shutdown();
+  }
+
+  public void scheduling(String taskName, Runnable command, long delay, TimeUnit unit) {
+    validateTaskName(taskName);
+    EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, 1);
+    pool.schedule(command, delay, unit);
+    pool.shutdown();
+  }
+
+  private void fetureTime(LocalDateTime time) {
+    LocalDateTime now = LocalDateTime.now();
+    if (now.isAfter(time)) {
+      throw new RuntimeException("时间已过！");
+    }
+  }
+
+  private void validateTaskName(String taskName) {
     if (threadContent.containsKey(taskName)) {
       if (threadContent.get(taskName).isTerminated()) {
         threadContent.remove(taskName);
       } else {
         throw new RuntimeException("任务已存在，请忽重复创建！");
       }
-      throw new RuntimeException("任务已存在，请忽重复创建！");
     }
-    EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, runQuantity);
-    for (int i = 0; i < runQuantity; i++) {
-      pool.scheduleByRedisQueue(queue, command, initialDelay, delay, unit);
-    }
-    threadContent.put(taskName, pool);
   }
 
   public TaskSchedule get(String taskName) {

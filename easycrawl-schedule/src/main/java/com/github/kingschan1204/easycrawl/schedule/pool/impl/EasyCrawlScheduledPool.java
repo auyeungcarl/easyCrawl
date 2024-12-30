@@ -90,6 +90,11 @@ public class EasyCrawlScheduledPool implements TaskSchedule {
   }
 
   @Override
+  public void shutdown() {
+    threadPool.shutdown();
+  }
+
+  @Override
   public boolean awaitTermination(long time, TimeUnit timeUnit) {
     try {
       return threadPool.awaitTermination(time, timeUnit);
