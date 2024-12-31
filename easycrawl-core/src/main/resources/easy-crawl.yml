@@ -9,3 +9,7 @@ defaultConfig:
   fileFolder: C://temp//
   # 是否开启http请求压缩
   httpCompress: true
+  afterInterceptors:
+    - com.github.kingschan1204.easycrawl.core.agent.interceptor.afterimpl.StatusPrintInterceptorImpl
+    - com.github.kingschan1204.easycrawl.core.agent.interceptor.afterimpl.TranscodingInterceptorImpl
+#    - com.github.kingschan1204.easycrawl.schedule.CountInterceptor

@@ -131,7 +131,11 @@ public class DateHelper {
    * @return 10位的时间戳
    */
   public Long timeStamp() {
-    return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000;
+    return timeStamp13() / 1000;
+  }
+
+  public Long timeStamp13() {
+    return this.localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
   }
 
   /**

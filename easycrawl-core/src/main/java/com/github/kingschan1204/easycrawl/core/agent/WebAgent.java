@@ -1,15 +1,17 @@
 package com.github.kingschan1204.easycrawl.core.agent;
 
 import com.github.kingschan1204.easycrawl.app.Application;
+import com.github.kingschan1204.easycrawl.app.config.AppDefaultConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.HttpRequestConfig;
 import com.github.kingschan1204.easycrawl.core.agent.dto.ProxyConfig;
 import com.github.kingschan1204.easycrawl.core.agent.impl.ApacheHttpClientAgent;
 import com.github.kingschan1204.easycrawl.core.agent.impl.JdkHttpAgent;
 import com.github.kingschan1204.easycrawl.core.agent.impl.JsoupHttp1Agent;
-import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.StatusPrintInterceptorImpl;
-import com.github.kingschan1204.easycrawl.core.agent.interceptor.impl.TranscodingInterceptorImpl;
+import com.github.kingschan1204.easycrawl.core.agent.interceptor.AfterInterceptor;
+import com.github.kingschan1204.easycrawl.core.agent.interceptor.PreInterceptor;
 import com.github.kingschan1204.easycrawl.core.agent.result.HttpResult;
 import com.github.kingschan1204.easycrawl.core.enums.HttpRequestEngine;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,19 +37,20 @@ public interface WebAgent {
   }
 
   static WebAgent agent(HttpRequestConfig config, HttpRequestEngine engine) {
+    AppDefaultConfig appDefaultConfig = Application.getInstance().getDefaultConfig();
     WebAgent agent = null;
     if (engine == null) {
-      engine =
-          HttpRequestEngine.fromValue(Application.getInstance().getDefaultConfig().getHttpEngine());
+      engine = HttpRequestEngine.fromValue(appDefaultConfig.getHttpEngine());
     }
     switch (engine) {
       case JSOUP -> agent = new JsoupHttp1Agent();
       case JDK -> agent = new JdkHttpAgent();
       case HTTPCLIENT5 -> agent = new ApacheHttpClientAgent();
     }
+    List<PreInterceptor> preInterceptors = appDefaultConfig.getPreInterceptorList();
+    List<AfterInterceptor> afterInterceptors = appDefaultConfig.getAfterInterceptorList();
     GenericHttp1AgentProxy proxy =
-        new GenericHttp1AgentProxy(
-            agent, new StatusPrintInterceptorImpl(), new TranscodingInterceptorImpl());
+        new GenericHttp1AgentProxy(agent, preInterceptors, afterInterceptors);
     proxy.config(config);
     return proxy;
   }
