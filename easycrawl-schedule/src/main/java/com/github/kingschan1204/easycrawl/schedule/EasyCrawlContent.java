@@ -71,7 +71,24 @@ public class EasyCrawlContent {
     threadContent.put(taskName, pool);
   }
 
-  public void scheduling(String taskName, Runnable command, LocalDateTime time) {
+  /**
+   * 调度一次 立马执行
+   *
+   * @param taskName
+   * @param command
+   */
+  public void schedulingOnce(String taskName, Runnable command) {
+    this.schedulingOnce(taskName, command, 0, TimeUnit.SECONDS);
+  }
+
+  /**
+   * 调度一次，指定时间执行
+   *
+   * @param taskName
+   * @param command
+   * @param time
+   */
+  public void schedulingOnce(String taskName, Runnable command, LocalDateTime time) {
     fetureTime(time);
     validateTaskName(taskName);
     EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, 1);
@@ -80,7 +97,15 @@ public class EasyCrawlContent {
     pool.shutdown();
   }
 
-  public void scheduling(String taskName, Runnable command, long delay, TimeUnit unit) {
+  /**
+   * 调度一次，指定时间单位延迟执行
+   *
+   * @param taskName
+   * @param command
+   * @param delay
+   * @param unit
+   */
+  public void schedulingOnce(String taskName, Runnable command, long delay, TimeUnit unit) {
     validateTaskName(taskName);
     EasyCrawlScheduledPool pool = new EasyCrawlScheduledPool(taskName, 1);
     pool.schedule(command, delay, unit);
