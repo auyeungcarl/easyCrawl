@@ -55,6 +55,10 @@ public class DateHelper {
    * @return DateHelperNew
    */
   public static DateHelper of(String text) {
+    if (text.matches("\\d{10}|\\d{13}")) {
+      return of(Long.valueOf(text));
+    }
+
     String date = text.contains(".") ? text.replaceAll("\\..*", "") : text;
     if (date.contains("T")) {
       date = date.replace("T", " ");
