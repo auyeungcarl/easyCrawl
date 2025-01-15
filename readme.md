@@ -80,7 +80,7 @@ defaultConfig:
 ### get response cookies
 
 ```
-        String curl = "https://www.xueqiu.com/about";
+        String curl = "https://example.com";
         Map<String, String> cookies = new ThinEasyCrawl(curl).execute().cookies();
         System.out.println(cookies);
 ```
