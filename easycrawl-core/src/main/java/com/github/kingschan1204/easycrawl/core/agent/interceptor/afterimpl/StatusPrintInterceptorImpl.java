@@ -16,7 +16,7 @@ public class StatusPrintInterceptorImpl implements AfterInterceptor {
   @Override
   public HttpResult interceptor(Map<String, Object> data, WebAgent webAgent) {
     HttpResult result = webAgent.getResult();
-    log.info(
+    log.debug(
         "{} -> ContentType : {} 编码 {} 耗时 {} 毫秒",
         webAgent.getClass().getSimpleName(),
         result.contentType(),

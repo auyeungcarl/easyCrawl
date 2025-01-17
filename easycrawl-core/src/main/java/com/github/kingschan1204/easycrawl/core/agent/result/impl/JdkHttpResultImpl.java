@@ -121,7 +121,7 @@ public class JdkHttpResultImpl implements HttpResult {
         } else {
           this.bytes = httpResponse.body();
         }
-        log.info(
+        log.debug(
             "{} 编码：{} 字节数:{} ",
             response.uri().toString(),
             contentEncoding,
